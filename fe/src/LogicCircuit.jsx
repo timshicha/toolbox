@@ -6,7 +6,7 @@ const TOTAL_SIZE = CANVAS_SIZE * CELL_SIZE
 
 class GateDrawer {
     
-    // Default configurations for the gate drawer
+    // Configure the gate drawer (colors, width)
     constructor(scale=null, gateStrokeColor=null, gateFillColor=null, wireColor=null, powerColor=null) {
         // Set default colors if colors not chosen
         scale ? this.scale = scale : this.scale = 1;
@@ -68,29 +68,15 @@ class GateDrawer {
     }
 }
 
-function LogicCircuit() {
+class GridDrawer {
+    
+    // Congifure the grid drawer
+    constructor(lineWidth=1, color="#444444") {
+        this.lineWidth = lineWidth;
+        this.color = color;
+    }
 
-    const visualCanvasRef = useRef();
-    const hintCanvasRef = useRef();
-    let clientX = 0;
-    let clientY = 0;
-    let toolInHand = 'AND';
-    const gateDrawer = new GateDrawer(CELL_SIZE);
-
-    useEffect(() => {
-        // Detect if client moved their mouse
-        hintCanvasRef.current.addEventListener("mousemove", event => handleCanvasMove(event));
-        return () => {
-            if (hintCanvasRef && hintCanvasRef.current) {
-                hintCanvasRef.current.removeEventListener("mousemove", event => handleCanvasMove(event));
-            }
-        };
-    }, []);
-
-    function resetVisualCanvas() {
-        // Clear the canvas
-        const canvas = visualCanvasRef.current;
-        const context = canvas.getContext('2d');
+    resetGrid(context) {
         context.reset();
         context.beginPath();
         // Draw the horitonal lines
@@ -103,9 +89,40 @@ function LogicCircuit() {
             context.moveTo(i * CELL_SIZE, 0);
             context.lineTo(i * CELL_SIZE, CANVAS_SIZE * CELL_SIZE);
         }
-        context.strokeStyle = "#444444";
-        context.lineWidth = 1;
+        context.strokeStyle = this.color;
+        context.lineWidth = this.lineWidth;
         context.stroke();
+    }
+}
+
+function LogicCircuit() {
+
+    const gridCanvasRef = useRef();
+    const mainCanvasRef = useRef();
+    const hintCanvasRef = useRef();
+    let clientX = 0;
+    let clientY = 0;
+    let toolInHand = 'AND';
+    const gridDrawer = new GridDrawer();
+    const gateDrawer = new GateDrawer(CELL_SIZE);
+
+    useEffect(() => {
+        resetGridCanvas();
+        // Detect if client moved their mouse
+        hintCanvasRef.current.addEventListener("mousemove", event => handleCanvasMove(event));
+        return () => {
+            if (hintCanvasRef && hintCanvasRef.current) {
+                hintCanvasRef.current.removeEventListener("mousemove", event => handleCanvasMove(event));
+            }
+        };
+    }, []);
+
+    function resetMainCanvas() {
+        // Clear the canvas
+    }
+
+    function resetGridCanvas() {
+        gridDrawer.resetGrid(gridCanvasRef.current.getContext('2d'));
     }
 
     // When the user moves in the canvas, update the coords
@@ -150,10 +167,11 @@ function LogicCircuit() {
     return (
         <>
             <div className={"block h-[" + TOTAL_SIZE + "px]"}>
-                <canvas ref={visualCanvasRef} className="absolute bg-black" width={CANVAS_SIZE * CELL_SIZE} height={CANVAS_SIZE * CELL_SIZE}></canvas>
+                <canvas ref={gridCanvasRef} className="absolute bg-black" width={CANVAS_SIZE * CELL_SIZE} height={CANVAS_SIZE * CELL_SIZE}></canvas>
+                <canvas ref={mainCanvasRef} className="absolute" width={CANVAS_SIZE * CELL_SIZE} height={CANVAS_SIZE * CELL_SIZE}></canvas>
                 <canvas ref={hintCanvasRef} className="absolute" width={CANVAS_SIZE * CELL_SIZE} height={CANVAS_SIZE * CELL_SIZE}></canvas>
             </div>
-            <button onClick={resetVisualCanvas}>Clear canvas</button>
+            <button onClick={resetMainCanvas}>Clear canvas</button>
             <button onClick={() => selectTool('AND')}>AND</button>
             <button onClick={() => selectTool('OR')}>OR</button>
             <button onClick={() => selectTool('NOT')}>NOT</button>
