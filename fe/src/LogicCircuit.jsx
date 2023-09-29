@@ -5,55 +5,65 @@ const CELL_SIZE = 15;
 const TOTAL_SIZE = CANVAS_SIZE * CELL_SIZE
 
 class GateDrawer {
-
+    
     // Default configurations for the gate drawer
-    constructor(scale=1) {
-        this.lineWidth = 4;
-        this.scale = scale;
+    constructor(scale=null, gateStrokeColor=null, gateFillColor=null, wireColor=null, powerColor=null) {
+        // Set default colors if colors not chosen
+        scale ? this.scale = scale : this.scale = 1;
+        gateStrokeColor ? this.gateStrokeColor = gateStrokeColor : this.gateStrokeColor = '#FFFFFF';
+        gateFillColor ? this.gateFillColor = gateFillColor : this.gateFillColor = '#444444';
+        wireColor ? this.wireColor = wireColor : this.wireColor = '#004C99';
+        powerColor ? this.powerColor = powerColor : this.powerColor = '#777700';
     }
 
-    drawAndGate(context, power, x, y) {
+    drawAndGate(context, x, y) {
         context.moveTo((x - 1) * this.scale, (y - 1) * this.scale);
         context.lineTo((x - 1) * this.scale, (y + 1) * this.scale);
         context.arc(x * this.scale, y * this.scale, this.scale, Math.PI / 2, 3 * Math.PI / 2, true);
         context.lineTo((x - 1) * this.scale, (y - 1) * this.scale);
-        // If power, make the inside light up
+        context.fill();
         context.stroke();
     }
 
-    drawOrGate(context, power, x, y) {
+    drawOrGate(context, x, y) {
         context.arc((x - 2) * this.scale, y * this.scale, 1.5 * this.scale, 7 * Math.PI / 4 + 0.05, Math.PI / 4 - 0.05, false);
         context.arc(x * this.scale, y * this.scale, this.scale, Math.PI / 2, 3 * Math.PI / 2, true);
         context.lineTo((x - 1) * this.scale, (y - 1) * this.scale);
-        // If power, make the inside light up
+        context.fill();
         context.stroke();
     }
 
-    drawNotGate(context, power, x, y) {
+    drawNotGate(context, x, y) {
         // Draw the triangle of the NOT gate
         context.moveTo((x + 1 / 3) * this.scale, y * this.scale);
         context.lineTo((x - 1) * this.scale, (y - 1) * this.scale);
         context.lineTo((x - 1) * this.scale, (y + 1) * this.scale);
         context.closePath();
-        // If no power, make the inside light up
+        context.fill();
         context.stroke();
-
         // Draw the circle of the NOT gate
         context.beginPath();
         context.arc((x + 2/3) * this.scale, y * this.scale, 1 / 3 * this.scale, Math.PI, 4 * Math.PI, false);
         context.closePath();
+        context.fill();
         context.stroke();
     }
 
-    drawGate(gate, context, power, x, y, x2 = null, y2=null) {
+    drawGate(gate, context, power, x, y, x2 = null, y2 = null) {
+        // Select proper fill color
+        if (power) context.fillStyle = this.powerColor;
+        else context.fillStyle = this.gateFillColor;
+        // Select proper stroke color
+        context.strokeStyle = this.gateStrokeColor;
+
         if (gate === 'AND') {
-            this.drawAndGate(context, power, x, y);
+            this.drawAndGate(context, x, y);
         }
         else if (gate === 'OR') {
-            this.drawOrGate(context, power, x, y);
+            this.drawOrGate(context, x, y);
         }
         else if (gate === 'NOT') {
-            this.drawNotGate(context, power, x, y);
+            this.drawNotGate(context, x, y);
         }
     }
 }
@@ -93,8 +103,8 @@ function LogicCircuit() {
             context.moveTo(i * CELL_SIZE, 0);
             context.lineTo(i * CELL_SIZE, CANVAS_SIZE * CELL_SIZE);
         }
-        context.strokeStyle = "#FFFFFF";
-        context.lineWidth = 0.2;
+        context.strokeStyle = "#444444";
+        context.lineWidth = 1;
         context.stroke();
     }
 
@@ -127,6 +137,7 @@ function LogicCircuit() {
         // Clear hint canvas first
         context.reset();
         context.strokeStyle = '#FFFFFF';
+        context.fillStyle = '#444444';
         // Draw the necessary hint object
 
         gateDrawer.drawGate(toolInHand, context, 0, clientX, clientY);
