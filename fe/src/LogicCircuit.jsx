@@ -1,4 +1,5 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useEffect } from "react";
+import { LogicCircuitBoard } from "./utilities/LogicCircuitBoard";
 
 const CANVAS_SIZE = 40;
 const CELL_SIZE = 15;
@@ -105,14 +106,17 @@ function LogicCircuit() {
     let toolInHand = 'AND';
     const gridDrawer = new GridDrawer();
     const gateDrawer = new GateDrawer(CELL_SIZE);
+    const circuitLogicBoard = new LogicCircuitBoard(CANVAS_SIZE);
 
     useEffect(() => {
         resetGridCanvas();
         // Detect if client moved their mouse
         hintCanvasRef.current.addEventListener("mousemove", event => handleCanvasMove(event));
+        hintCanvasRef.current.addEventListener("mousedown", handleCanvasClick);
         return () => {
             if (hintCanvasRef && hintCanvasRef.current) {
                 hintCanvasRef.current.removeEventListener("mousemove", event => handleCanvasMove(event));
+                hintCanvasRef.current.removeEventListener("mousedown", handleCanvasClick);
             }
         };
     }, []);
@@ -148,15 +152,17 @@ function LogicCircuit() {
         }
     }
 
+    // When the user clicks in the canvas
+    function handleCanvasClick() {
+        circuitLogicBoard.addGate(toolInHand, clientX, clientY);
+    }
+
     function updateHintCanvas() {
         const canvas = hintCanvasRef.current;
         const context = canvas.getContext('2d');
         // Clear hint canvas first
         context.reset();
-        context.strokeStyle = '#FFFFFF';
-        context.fillStyle = '#444444';
         // Draw the necessary hint object
-
         gateDrawer.drawGate(toolInHand, context, 0, clientX, clientY);
     }
 
