@@ -125,57 +125,63 @@ function LogicCircuit() {
         };
     }, []);
 
-    function resetMainCanvas() {
-        // Clear the canvas
+    // Quick functions to get canvas context of the canvases
+    function getGridContext() {
+        return gridCanvasRef.current.getContext('2d');
+    }
+    function getMainContext() {
+        return mainCanvasRef.current.getContext('2d');
+    }
+    function getHintContext() {
+        return hintCanvasRef.current.getContext('2d');
     }
 
+    // Make the visual canvas display the current circuit board
+    function updateMainCanvas() {
+        const context = getMainContext();
+        context.reset();
+        for (let gate of circuitLogicBoard.gates) {
+            mainGateDrawer.drawGate(gate[0], context, 0, gate[1], gate[2]);
+        }
+    }
+
+    // Display a gate where the user is hovering
+    function updateHintCanvas() {
+        const context = getHintContext();
+        context.reset();
+        hintGateDrawer.drawGate(toolInHand, context, 0, clientX, clientY);
+    }
+
+    // Draw the grid
     function resetGridCanvas() {
-        gridDrawer.resetGrid(gridCanvasRef.current.getContext('2d'));
+        const context = getGridContext();
+        gridDrawer.resetGrid(context);
     }
 
     // When the user moves in the canvas, update the coords
     function handleCanvasMove(event) {
-        const canvasCoords = hintCanvasRef.current.getBoundingClientRect();
-
         // Round nearest reference: https://1loc.dev/math/round-a-number-to-the-nearest-multiple-of-a-given-value/
         function roundNearest(value, nearest) {
-            return Math.round(value / nearest) * nearest;
+            return parseInt(Math.round(value / nearest) * nearest);
         }
-        // If the grid coords changed, update them
-        const newX = parseInt(roundNearest(event.clientX - canvasCoords.left, CELL_SIZE) / CELL_SIZE);
-        const newY = parseInt(roundNearest(event.clientY - canvasCoords.top, CELL_SIZE) / CELL_SIZE);
-
-        // If the cell the user is selecting changed
+        // Get the user's coordinates
+        const canvasCoords = hintCanvasRef.current.getBoundingClientRect();
+        const newX = roundNearest(event.clientX - canvasCoords.left, CELL_SIZE) / CELL_SIZE;
+        const newY = roundNearest(event.clientY - canvasCoords.top, CELL_SIZE) / CELL_SIZE;
+        // If the cell the user is selecting changed:
         if (newX !== clientX || newY !== clientY) {
-            // console.log(newX, clientX);
             clientX = newX;
-            // console.log(newY, clientY);
             clientY = newY;
-
             updateHintCanvas();
         }
     }
 
     // When the user clicks in the canvas
     function handleCanvasClick() {
-        let newGate = circuitLogicBoard.addGate(toolInHand, clientX, clientY);
-        const context = mainCanvasRef.current.getContext('2d');
-        if (newGate) {
-            mainGateDrawer.drawGate(toolInHand, context, 0, clientX, clientY);
-            hintCanvasRef.current.getContext('2d').reset();
+        if (!circuitLogicBoard.addGate(toolInHand, clientX, clientY)) {
+            console.log("Invalid gate placement.");
         }
-        else {
-            console.log("Bad gate or wire placement");
-        }
-    }
-
-    function updateHintCanvas() {
-        const canvas = hintCanvasRef.current;
-        const context = canvas.getContext('2d');
-        // Clear hint canvas first
-        context.reset();
-        // Draw the necessary hint object
-        hintGateDrawer.drawGate(toolInHand, context, 0, clientX, clientY);
+        updateMainCanvas();
     }
 
     function selectTool(tool) {
@@ -189,7 +195,6 @@ function LogicCircuit() {
                 <canvas ref={mainCanvasRef} className="absolute" width={CANVAS_SIZE * CELL_SIZE} height={CANVAS_SIZE * CELL_SIZE}></canvas>
                 <canvas ref={hintCanvasRef} className="absolute" width={CANVAS_SIZE * CELL_SIZE} height={CANVAS_SIZE * CELL_SIZE}></canvas>
             </div>
-            <button onClick={resetMainCanvas}>Clear canvas</button>
             <button onClick={() => selectTool('AND')}>AND</button>
             <button onClick={() => selectTool('OR')}>OR</button>
             <button onClick={() => selectTool('NOT')}>NOT</button>
