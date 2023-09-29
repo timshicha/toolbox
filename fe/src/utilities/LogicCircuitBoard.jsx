@@ -11,12 +11,14 @@ export class LogicCircuitBoard {
     addGate(gateType, x, y) {
         // Make sure the gate is inbounds
         if (x < 1 || x >= this.size) {
-            return -1;
+            return null;
         }
         if (y < 1 || y >= this.size) {
-            return -1;
+            return null;
         }
-        this.gates.push([gateType, x, y]);
+        let newGate = [gateType, x, y];
+        this.gates.push(newGate);
         console.log(this.gates);
+        return newGate;
     }
 }
