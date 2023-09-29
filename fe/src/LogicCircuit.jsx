@@ -165,10 +165,10 @@ function LogicCircuit() {
         const context = getMainContext();
         context.reset();
         for (let gate of circuitLogicBoard.gates) {
-            mainGateDrawer.drawGate(gate[0], context, 0, gate[1], gate[2]);
+            mainGateDrawer.drawGate(gate.gateType, context, gate.power, gate.x, gate.y);
         }
         for (let wire of circuitLogicBoard.wires) {
-            mainGateDrawer.drawGate('wire', context, 0, wire[0], wire[1], wire[2], wire[3]);
+            mainGateDrawer.drawGate('wire', context, wire.power, wire.x, wire.y, wire.x2, wire.y2);
         }
     }
 

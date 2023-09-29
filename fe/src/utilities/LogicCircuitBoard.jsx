@@ -6,12 +6,23 @@ function isInRange(number, minVal, maxVal) {
 }
 
 export class LogicCircuitBoard {
-    
+
     constructor(size) {
         this.size = size;
         this.gates = [];
         this.wires = [];
-        this.power = [0, 0, 0, 0];
+        this.switchOn = [0, 0, 0, 0];
+    }
+
+    createGate(gateType, x, y, x2=null, y2=null, power=0) {
+        return {
+            gateType: gateType,
+            power: power,
+            x: x,
+            y: y,
+            x2: x2,
+            y2: y2
+        };
     }
 
     addGate(gateType, x, y) {
@@ -20,8 +31,9 @@ export class LogicCircuitBoard {
             !isInRange(y, 1, this.size - 1)) {
             return null;
         }
-        this.gates.push([gateType, x, y]);
-        return true;
+        const gate = this.createGate(gateType, x, y);
+        this.gates.push(gate);
+        return gate;
     }
 
     addWire(x, y, x2, y2) {
@@ -32,7 +44,8 @@ export class LogicCircuitBoard {
             !isInRange(y2, 0, this.size)) {
             return null;
         }
-        this.wires.push([x, y, x2, y2]);
-        return true;
+        const gate = this.createGate('wire', x, y, x2, y2);
+        this.wires.push(gate);
+        return gate;
     }
 }
