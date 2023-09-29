@@ -91,7 +91,14 @@ class GateDrawer {
             this.drawNotGate(context, x, y);
         }
         else if (gate === 'wire') {
-            this.drawWire(context, x, y, x2, y2);
+            // If wire start specified, draw wire
+            if (x2 !== null && y2 !== null) {
+                this.drawWire(context, x, y, x2, y2);
+            }
+            // If no wire start, just draw a dot
+            else {
+                this.drawWire(context, x, y, x, y);
+            }
         }
     }
 }
@@ -131,7 +138,8 @@ function LogicCircuit() {
     let clientX = 0;
     let clientY = 0;
     let toolInHand = 'AND';
-    let wireStart = null;
+    let wireStartX = null;
+    let wireStartY = null;
     const gridDrawer = new GridDrawer();
     const mainGateDrawer = new GateDrawer();
     const hintGateDrawer = new GateDrawer(CELL_SIZE, '#444444AA', '#444444AA', '#444444AA');
@@ -175,14 +183,7 @@ function LogicCircuit() {
     function updateHintCanvas() {
         const context = getHintContext();
         context.reset();
-        if (toolInHand === 'wire') {
-            if (wireStart) {
-                hintGateDrawer.drawGate(toolInHand, context, 0, wireStart[0], wireStart[1], clientX, clientY);
-            }
-        }
-        else {
-            hintGateDrawer.drawGate(toolInHand, context, 0, clientX, clientY);
-        }
+        hintGateDrawer.drawGate(toolInHand, context, 0, clientX, clientY, wireStartX, wireStartY);
     }
 
     // Draw the grid
@@ -214,24 +215,31 @@ function LogicCircuit() {
         // If user is trying to add a wire
         if (toolInHand === 'wire') {
             // See if user already selected first point
-            if (wireStart) {
-                if (clientX === wireStart[0] && clientY === wireStart[1]) {
-                    wireStart = null;
+            if (wireStartX !== null && wireStartY !== null) {
+                if (clientX === wireStartX && clientY === wireStartY) {
+                    wireStartX = null;
+                    wireStartY = null;
                 }
-                else if (!circuitLogicBoard.addWire(wireStart[0], wireStart[1], clientX, clientY)) {
+                else if (!circuitLogicBoard.addWire(wireStartX, wireStartY, clientX, clientY)) {
                     console.log("Invalid wire placement.");
                 }
                 else {
-                    wireStart = null;
+                    wireStartX = null;
+                    wireStartY = null;
+                    clearHintCanvas();
                 }
             }
             else {
-                wireStart = [clientX, clientY];
+                wireStartX = clientX;
+                wireStartY = clientY;
             }
         }
         else {
             if (!circuitLogicBoard.addGate(toolInHand, clientX, clientY)) {
                 console.log("Invalid gate placement.");
+            }
+            else {
+                clearHintCanvas();
             }
         }
         updateMainCanvas();
@@ -239,7 +247,8 @@ function LogicCircuit() {
 
     function selectTool(tool) {
         toolInHand = tool;
-        wireStart = null;
+        wireStartX = null;
+        wireStartY = null;
     }
 
     return (
