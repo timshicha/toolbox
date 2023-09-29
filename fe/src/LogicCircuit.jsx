@@ -13,7 +13,7 @@ class GateDrawer {
         scale ? this.scale = scale : this.scale = CELL_SIZE;
         gateStrokeColor ? this.gateStrokeColor = gateStrokeColor : this.gateStrokeColor = '#FFFFFF';
         gateFillColor ? this.gateFillColor = gateFillColor : this.gateFillColor = '#444444';
-        wireColor ? this.wireColor = wireColor : this.wireColor = '#004C99';
+        wireColor ? this.wireColor = wireColor : this.wireColor = '#003C89';
         powerColor ? this.powerColor = powerColor : this.powerColor = '#777700';
     }
 
@@ -53,12 +53,33 @@ class GateDrawer {
         context.stroke();
     }
 
+    drawWire(context, x, y, x2, y2) {
+        context.strokeStyle = this.wireColor;
+        context.fillStyle = this.wireColor;
+        context.beginPath();
+        context.moveTo(x * this.scale, y * this.scale);
+        context.arc(x * this.scale, y * this.scale, 1 / 8 * CELL_SIZE, 0, 2 * Math.PI);
+        context.stroke();
+        context.fill();
+        context.beginPath();
+        context.moveTo(x * CELL_SIZE, y * CELL_SIZE);
+        context.lineTo(x2 * CELL_SIZE, y2 * CELL_SIZE);
+        context.stroke();
+        context.fill();
+        context.beginPath();
+        context.arc(x2 * CELL_SIZE, y2 * CELL_SIZE, 1 / 8 * CELL_SIZE, 0, 2 * Math.PI);
+        context.lineTo(x2 * CELL_SIZE, y2 * CELL_SIZE);
+        context.stroke();
+        context.fill();
+    }
+
     drawGate(gate, context, power, x, y, x2 = null, y2 = null) {
         // Select proper fill color
         if (power) context.fillStyle = this.powerColor;
         else context.fillStyle = this.gateFillColor;
         // Select proper stroke color
         context.strokeStyle = this.gateStrokeColor;
+        context.lineWidth = 2;
 
         if (gate === 'AND') {
             this.drawAndGate(context, x, y);
@@ -68,6 +89,9 @@ class GateDrawer {
         }
         else if (gate === 'NOT') {
             this.drawNotGate(context, x, y);
+        }
+        else if (gate === 'wire') {
+            this.drawWire(context, x, y, x2, y2);
         }
     }
 }
@@ -107,22 +131,14 @@ function LogicCircuit() {
     let clientX = 0;
     let clientY = 0;
     let toolInHand = 'AND';
+    let wireStart = null;
     const gridDrawer = new GridDrawer();
     const mainGateDrawer = new GateDrawer();
-    const hintGateDrawer = new GateDrawer(CELL_SIZE, '#444444AA', '#444444AA', '#003C89AA');
+    const hintGateDrawer = new GateDrawer(CELL_SIZE, '#444444AA', '#444444AA', '#444444AA');
     const circuitLogicBoard = new LogicCircuitBoard(CANVAS_SIZE);
 
     useEffect(() => {
         resetGridCanvas();
-        // Detect if client moved their mouse
-        hintCanvasRef.current.addEventListener("mousemove", event => handleCanvasMove(event));
-        hintCanvasRef.current.addEventListener("mousedown", handleCanvasClick);
-        return () => {
-            if (hintCanvasRef && hintCanvasRef.current) {
-                hintCanvasRef.current.removeEventListener("mousemove", event => handleCanvasMove(event));
-                hintCanvasRef.current.removeEventListener("mousedown", handleCanvasClick);
-            }
-        };
     }, []);
 
     // Quick functions to get canvas context of the canvases
@@ -143,13 +159,30 @@ function LogicCircuit() {
         for (let gate of circuitLogicBoard.gates) {
             mainGateDrawer.drawGate(gate[0], context, 0, gate[1], gate[2]);
         }
+        for (let wire of circuitLogicBoard.wires) {
+            mainGateDrawer.drawGate('wire', context, 0, wire[0], wire[1], wire[2], wire[3]);
+        }
+    }
+
+    // Clear the hint canvas
+    function clearHintCanvas() {
+        const context = getHintContext();
+        context.reset();
+        console.log("ok");
     }
 
     // Display a gate where the user is hovering
     function updateHintCanvas() {
         const context = getHintContext();
         context.reset();
-        hintGateDrawer.drawGate(toolInHand, context, 0, clientX, clientY);
+        if (toolInHand === 'wire') {
+            if (wireStart) {
+                hintGateDrawer.drawGate(toolInHand, context, 0, wireStart[0], wireStart[1], clientX, clientY);
+            }
+        }
+        else {
+            hintGateDrawer.drawGate(toolInHand, context, 0, clientX, clientY);
+        }
     }
 
     // Draw the grid
@@ -178,14 +211,35 @@ function LogicCircuit() {
 
     // When the user clicks in the canvas
     function handleCanvasClick() {
-        if (!circuitLogicBoard.addGate(toolInHand, clientX, clientY)) {
-            console.log("Invalid gate placement.");
+        // If user is trying to add a wire
+        if (toolInHand === 'wire') {
+            // See if user already selected first point
+            if (wireStart) {
+                if (clientX === wireStart[0] && clientY === wireStart[1]) {
+                    wireStart = null;
+                }
+                else if (!circuitLogicBoard.addWire(wireStart[0], wireStart[1], clientX, clientY)) {
+                    console.log("Invalid wire placement.");
+                }
+                else {
+                    wireStart = null;
+                }
+            }
+            else {
+                wireStart = [clientX, clientY];
+            }
+        }
+        else {
+            if (!circuitLogicBoard.addGate(toolInHand, clientX, clientY)) {
+                console.log("Invalid gate placement.");
+            }
         }
         updateMainCanvas();
     }
 
     function selectTool(tool) {
         toolInHand = tool;
+        wireStart = null;
     }
 
     return (
@@ -193,8 +247,10 @@ function LogicCircuit() {
             <div className={"block h-[" + TOTAL_SIZE + "px]"}>
                 <canvas ref={gridCanvasRef} className="absolute bg-black" width={CANVAS_SIZE * CELL_SIZE} height={CANVAS_SIZE * CELL_SIZE}></canvas>
                 <canvas ref={mainCanvasRef} className="absolute" width={CANVAS_SIZE * CELL_SIZE} height={CANVAS_SIZE * CELL_SIZE}></canvas>
-                <canvas ref={hintCanvasRef} className="absolute" width={CANVAS_SIZE * CELL_SIZE} height={CANVAS_SIZE * CELL_SIZE}></canvas>
+                <canvas ref={hintCanvasRef} className="absolute" width={CANVAS_SIZE * CELL_SIZE} height={CANVAS_SIZE * CELL_SIZE}
+                    onMouseLeave={clearHintCanvas} onMouseMove={handleCanvasMove} onMouseDown={handleCanvasClick}></canvas>
             </div>
+            <button onClick={() => selectTool('wire')}>wire</button>
             <button onClick={() => selectTool('AND')}>AND</button>
             <button onClick={() => selectTool('OR')}>OR</button>
             <button onClick={() => selectTool('NOT')}>NOT</button>

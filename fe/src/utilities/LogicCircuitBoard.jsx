@@ -1,4 +1,10 @@
 
+// Check if a number is between two values
+function isInRange(number, minVal, maxVal) {
+    if (number >= minVal && number <= maxVal) return true;
+    return false;
+}
+
 export class LogicCircuitBoard {
     
     constructor(size) {
@@ -9,16 +15,24 @@ export class LogicCircuitBoard {
     }
 
     addGate(gateType, x, y) {
-        // Make sure the gate is inbounds
-        if (x < 1 || x >= this.size) {
+        // Make sure the gate coords are between 1 and size - 1
+        if (!isInRange(x, 1, this.size - 1) ||
+            !isInRange(y, 1, this.size - 1)) {
             return null;
         }
-        if (y < 1 || y >= this.size) {
+        this.gates.push([gateType, x, y]);
+        return true;
+    }
+
+    addWire(x, y, x2, y2) {
+        // Make sure the wire ends are between 0 and size
+        if (!isInRange(x, 0, this.size) &&
+            !isInRange(y, 0, this.size) &&
+            !isInRange(x2, 0, this.size) &&
+            !isInRange(y2, 0, this.size)) {
             return null;
         }
-        let newGate = [gateType, x, y];
-        this.gates.push(newGate);
-        console.log(this.gates);
-        return newGate;
+        this.wires.push([x, y, x2, y2]);
+        return true;
     }
 }
