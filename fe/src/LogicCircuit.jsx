@@ -29,12 +29,31 @@ class GateDrawer {
         context.stroke();
     }
 
+    drawNotGate(context, power, x, y) {
+        // Draw the triangle of the NOT gate
+        context.moveTo((x + 1 / 3) * this.scale, y * this.scale);
+        context.lineTo((x - 1) * this.scale, (y - 1) * this.scale);
+        context.lineTo((x - 1) * this.scale, (y + 1) * this.scale);
+        context.closePath();
+        // If no power, make the inside light up
+        context.stroke();
+
+        // Draw the circle of the NOT gate
+        context.beginPath();
+        context.arc((x + 2/3) * this.scale, y * this.scale, 1 / 3 * this.scale, Math.PI, 4 * Math.PI, false);
+        context.closePath();
+        context.stroke();
+    }
+
     drawGate(gate, context, power, x, y, x2 = null, y2=null) {
         if (gate === 'AND') {
             this.drawAndGate(context, power, x, y);
         }
-        if (gate === 'OR') {
+        else if (gate === 'OR') {
             this.drawOrGate(context, power, x, y);
+        }
+        else if (gate === 'NOT') {
+            this.drawNotGate(context, power, x, y);
         }
     }
 }
@@ -126,6 +145,7 @@ function LogicCircuit() {
             <button onClick={resetVisualCanvas}>Clear canvas</button>
             <button onClick={() => selectTool('AND')}>AND</button>
             <button onClick={() => selectTool('OR')}>OR</button>
+            <button onClick={() => selectTool('NOT')}>NOT</button>
 
         </>
     );
