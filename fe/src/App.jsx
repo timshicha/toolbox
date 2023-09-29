@@ -5,11 +5,7 @@ import { LogicCircuit } from './LogicCircuit';
 function App() {
   return (
     <div className="App">
-      <header>
-      </header>
-      <body>
-        <LogicCircuit></LogicCircuit>
-      </body>
+      <LogicCircuit></LogicCircuit>
     </div>
   );
 }
