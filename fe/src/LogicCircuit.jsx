@@ -144,7 +144,7 @@ function LogicCircuit() {
     const mainGateDrawer = new GateDrawer();
     const hintGateDrawer = new GateDrawer(CELL_SIZE, '#444444AA', '#444444AA', '#444444AA');
     const circuitLogicBoard = new LogicCircuitBoard(CANVAS_SIZE);
-
+    
     useEffect(() => {
         resetGridCanvas();
     }, []);
@@ -170,6 +170,9 @@ function LogicCircuit() {
         for (let wire of circuitLogicBoard.wires) {
             mainGateDrawer.drawGate('wire', context, wire.power, wire.x, wire.y, wire.x2, wire.y2);
         }
+
+        // Build the graph
+        circuitLogicBoard.buildGraph();
     }
 
     // Clear the hint canvas
@@ -253,16 +256,19 @@ function LogicCircuit() {
 
     return (
         <>
-            <div className={"block h-[" + TOTAL_SIZE + "px]"}>
+            <div className={"relative h-[" + TOTAL_SIZE + "px]"}>
                 <canvas ref={gridCanvasRef} className="absolute bg-black" width={CANVAS_SIZE * CELL_SIZE} height={CANVAS_SIZE * CELL_SIZE}></canvas>
                 <canvas ref={mainCanvasRef} className="absolute" width={CANVAS_SIZE * CELL_SIZE} height={CANVAS_SIZE * CELL_SIZE}></canvas>
                 <canvas ref={hintCanvasRef} className="absolute" width={CANVAS_SIZE * CELL_SIZE} height={CANVAS_SIZE * CELL_SIZE}
                     onMouseLeave={clearHintCanvas} onMouseMove={handleCanvasMove} onMouseDown={handleCanvasClick}></canvas>
             </div>
-            <button onClick={() => selectTool('wire')}>wire</button>
-            <button onClick={() => selectTool('AND')}>AND</button>
-            <button onClick={() => selectTool('OR')}>OR</button>
-            <button onClick={() => selectTool('NOT')}>NOT</button>
+            <div className="absolute mt-[600px]">
+                <button onClick={() => selectTool('wire')}>wire</button>
+                <button onClick={() => selectTool('AND')}>AND</button>
+                <button onClick={() => selectTool('OR')}>OR</button>
+                <button onClick={() => selectTool('NOT')}>NOT</button>
+                {/* <button onClick={circuitLogicBoard.buildGraph}>Create graph</button> */}
+            </div>
 
         </>
     );
