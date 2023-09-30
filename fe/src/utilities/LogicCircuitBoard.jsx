@@ -22,60 +22,87 @@ class Point {
         return false;
     }
 
+    // See if a point exists in an array
+    static pointExists(point, pointsArray) {
+        // Look through all the points
+        for (let currentPoint of pointsArray) {
+            // If a point is found
+            if (this.comparePoints(point, currentPoint)) {
+                return true;
+            }
+        }
+        // If point was not found
+        return false;
+    }
+
     // Add a point to an array of points if the point is not
     // already in the array.
     static addPoint(point, pointsArray) {
-        // Look through all the points
-        for (let currentPoint of pointsArray) {
-            // If a point like this is found, quit
-            if (this.comparePoints(point, currentPoint)) {
-                return false;
-            }
+        // Check if the point exists
+        if (this.pointExists(point, pointsArray)) {
+            return false;
         }
         // If this point does not already exist, add it
         pointsArray.push(point);
         return true;
     }
 
-    // If either point1 or point2 are in the array of points,
-    // add the other point to the array (if it's not already
-    // in the array). Return true if there was a match, and
-    // return false if neither of the points appeared in the
-    // pointsArray.
-    static mergeWireToArray(point1, point2, pointsArray) {
-        // Go through each point in the array
-        for (let i = 0; i < pointsArray.length; i++) {
-            let currentPoint = pointsArray[i];
-            // If point1 matches, add point2
-            if (this.comparePoints(point1, currentPoint)) {
-                this.addPoint(point2, pointsArray);
-                return true;
-            }
-            // If point2 matches, add point1
-            else if (this.comparePoints(point2, currentPoint)) {
-                this.addPoint(point1, pointsArray);
-                return true;
-            }
-        }
-        // Otherwise, neither point is in the array
-        return false;
+    // Merge two arrays
+    static mergeArrays(pointsArray1, pointsArray2) {
+        return pointsArray1.concat(pointsArray2);
     }
 
-    // Given a list of lists of points, add the wire to the
-    // proper list (or to a new list).
-    static addWireToGraph(wire, graph) {
-        let point1 = Point.createPoint(wire.x, wire.y);
-        let point2 = Point.createPoint(wire.x2, wire.y2);
-        // Go through each wire array
-        for (let wireArray of graph) {
-            // Add point to this wire array
-            if (this.mergeWireToArray(point1, point2, wireArray)) {
+    // Add a wire to graph
+    static addWire(wire, graph) {
+        const point1 = this.createPoint(wire.x, wire.y);
+        const point2 = this.createPoint(wire.x2, wire.y2);
+        
+        for (let i = 0; i < graph.length; i++) {
+            let wireArray = graph[i];
+            // If point1 is found
+            if (this.pointExists(point1, wireArray)) {
+                // If point2 is also here, don't add anything
+                if (this.pointExists(point2, wireArray)) {
+                    return true;
+                }
+                // If point2 is in a different array, merge arrays
+                for (let j = i + 1; j < graph.length; j++) {
+                    let wireArray2 = graph[j];
+                    if (this.pointExists(point2, wireArray2)) {
+                        graph[i] = this.mergeArrays(wireArray, wireArray2);
+                        // Remove other array
+                        graph.splice(j, 1);
+                        return true;
+                    }
+                }
+                // Otherwise, add point2 here
+                this.addPoint(point2, wireArray);
+                return;
+            }
+            // If point2 is found
+            if (this.pointExists(point2, wireArray)) {
+                // If point1 is also here, don't add anything
+                if (this.pointExists(point1, wireArray)) {
+                    return true;
+                }
+                // If point1 is in a different array, merge arrays
+                for (let j = i + 1; j < graph.length; j++) {
+                    let wireArray2 = graph[j];
+                    if (this.pointExists(point1, wireArray2)) {
+                        graph[i] = this.mergeArrays(wireArray, wireArray2);
+                        // Remove other array
+                        graph.splice(j, 1);
+                        return true;
+                    }
+                }
+                // Otherwise, add point1 here
+                this.addPoint(point1, wireArray);
                 return;
             }
         }
-        // If no wire array contains either point, create
-        // a new wire array.
+        // If neither point was found
         graph.push([point1, point2]);
+        return true;
     }
 }
 
@@ -130,9 +157,8 @@ export class LogicCircuitBoard {
     buildGraph() {
         const graph = [];
         for (let wire of this.wires) {
-            Point.addWireToGraph(wire, graph);
+            Point.addWire(wire, graph);
         }
-        console.log(this);
         console.log(graph);
     }
 
