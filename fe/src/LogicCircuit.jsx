@@ -164,15 +164,15 @@ function LogicCircuit() {
     function updateMainCanvas() {
         const context = getMainContext();
         context.reset();
-        for (let gate of circuitLogicBoard.gates) {
-            mainGateDrawer.drawGate(gate.gateType, context, gate.power, gate.x, gate.y);
-        }
-        for (let wire of circuitLogicBoard.wires) {
-            mainGateDrawer.drawGate('wire', context, wire.power, wire.x, wire.y, wire.x2, wire.y2);
-        }
+        // for (let gate of circuitLogicBoard.gates) {
+        //     mainGateDrawer.drawGate(gate.gateType, context, gate.power, gate.x, gate.y);
+        // }
+        // for (let wire of circuitLogicBoard.wires) {
+        //     mainGateDrawer.drawGate('wire', context, wire.power, wire.x, wire.y, wire.x2, wire.y2);
+        // }
 
         // Build the graph
-        circuitLogicBoard.buildGraph();
+        circuitLogicBoard.calculateOnBy();
     }
 
     // Clear the hint canvas
