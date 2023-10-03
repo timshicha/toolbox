@@ -137,7 +137,7 @@ function LogicCircuit() {
     const hintCanvasRef = useRef();
     let clientX = 0;
     let clientY = 0;
-    let toolInHand = 'AND';
+    let toolInHand = 'wire';
     let wireStartX = null;
     let wireStartY = null;
     const gridDrawer = new GridDrawer();
@@ -172,7 +172,7 @@ function LogicCircuit() {
         // }
 
         // Build the graph
-        circuitLogicBoard.calculateOnBy();
+        circuitLogicBoard.calc();
     }
 
     // Clear the hint canvas

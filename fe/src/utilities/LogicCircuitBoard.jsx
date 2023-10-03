@@ -106,6 +106,7 @@ export class LogicCircuitBoard {
         // Create matrix of lists. Each cell contains the gates
         // and wires that affect or affected by that cell.
         this.board = new Array(size).fill(null);
+        this.size = size;
         for (let i = 0; i < size; i++) {
             this.board[i] = new Array(size).fill(null);
             for (let j = 0; j < size; j++) {
@@ -117,5 +118,51 @@ export class LogicCircuitBoard {
             }
         }
         this.board[1][1].onBy = [{ x: 0, y: 0 }];
+    }
+
+    addWire(x, y, x2, y2) {
+        this.board[x][y].wires.push({ x: x2, y: y2 });
+        this.board[x2][y2].wires.push({ x: x, y: y });
+        return true;
+    }
+
+    addGate(gateType, x, y) {
+        this.board[x][y].gate = gateType;
+        return true;
+    }
+
+    onByExists(x, y, onBy) {
+        for (let currentOnBy of this.board[x][y].onBy) {
+            if (onBy.x === currentOnBy.x &&
+                onBy.y === currentOnBy.y) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    updateNeighbor(x, y, neighborX, neighborY) {
+        for (let currentOnBy of this.board[x][y].onBy) {
+            if (!this.onByExists(neighborX, neighborY, currentOnBy)) {
+                this.board[neighborX][neighborY].onBy.push({ x: currentOnBy.x, y: currentOnBy.y });
+            }
+        }
+    }
+
+    updateNeighbors(x, y) {
+        for (let neighbor of this.board[x][y].wires) {
+            this.updateNeighbor(x, y, neighbor.x, neighbor.y);
+        }
+    }
+
+    calc() {
+        for (let i = 0; i < 100; i++) {
+            for (let x = 0; x < this.size; x++) {
+                for (let y = 0; y < this.size; y++) {
+                    this.updateNeighbors(x, y);
+                }
+            }
+        }
+        console.log(this.board);
     }
 }
