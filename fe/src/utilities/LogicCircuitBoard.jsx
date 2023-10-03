@@ -113,11 +113,11 @@ export class LogicCircuitBoard {
                 this.board[i][j] = {
                     gate: null,
                     wires: [],
-                    onBy: []
+                    onBy: [],
+                    power: 0
                 };
             }
         }
-        this.board[1][1].onBy = [{ x: 0, y: 0 }];
     }
 
     addWire(x, y, x2, y2) {
@@ -128,6 +128,8 @@ export class LogicCircuitBoard {
 
     addGate(gateType, x, y) {
         this.board[x][y].gate = gateType;
+        this.board[x + 1][y].onBy.push({ x: x + 1, y: y });
+        this.board[x][y].onBy.push({ x: x, y: y });
         return true;
     }
 
@@ -155,14 +157,76 @@ export class LogicCircuitBoard {
         }
     }
 
+    propogateGates() {
+        for (let x = 1; x < this.size - 1; x++) {
+            for (let y = 1; y < this.size - 1; y++) {
+                // If no gate
+                if (!this.board[x][y].gate) continue;
+                // If AND gate
+                if (this.board[x][y].gate === 'AND') {
+                    if (this.board[x - 1][y - 1].power &&
+                        this.board[x - 1][y + 1].power) {
+                        this.board[x + 1][y].power = 1;
+                        this.board[x][y].power = 1;
+                    }
+                    else {
+                        this.board[x + 1][y].power = 0;
+                        this.board[x][y].power = 0;
+                    }
+                }
+                else if (this.board[x][y].gate === 'OR') {
+                    if (this.board[x - 1][y - 1].power ||
+                        this.board[x - 1][y + 1].power) {
+                        this.board[x + 1][y].power = 1;
+                        this.board[x][y].power = 1;
+                    }
+                    else {
+                        this.board[x][y + 1].power = 0;
+                        this.board[x][y].power = 0;
+                    }
+                }
+                else if (this.board[x][y].gate === 'NOT') {
+                    if (this.board[x - 1][y].power) {
+                        this.board[x + 1][y].power = 0;
+                        this.board[x][y].power = 0;
+                    }
+                    else {
+                        this.board[x + 1][y].power = 1;
+                        this.board[x][y].power = 1;
+                    }
+                }
+            }
+        }
+    }
+
+    hasPower(x, y) {
+        // See all the onBy's
+        for (let onBy of this.board[x][y].onBy) {
+            if (this.board[onBy.x][onBy.y].power) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    updatePower() {
+        for (let x = 0; x < this.size; x++) {
+            for (let y = 0; y < this.size; y++) {
+                this.board[x][y].power = this.hasPower(x, y);
+            }
+        }
+    }
+
     calc() {
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 50; i++) {
             for (let x = 0; x < this.size; x++) {
                 for (let y = 0; y < this.size; y++) {
                     this.updateNeighbors(x, y);
                 }
             }
         }
+        this.propogateGates();
+        this.updatePower();
         console.log(this.board);
     }
 }

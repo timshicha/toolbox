@@ -54,8 +54,6 @@ class GateDrawer {
     }
 
     drawWire(context, x, y, x2, y2) {
-        context.strokeStyle = this.wireColor;
-        context.fillStyle = this.wireColor;
         context.beginPath();
         context.moveTo(x * this.scale, y * this.scale);
         context.arc(x * this.scale, y * this.scale, 1 / 8 * CELL_SIZE, 0, 2 * Math.PI);
@@ -93,6 +91,14 @@ class GateDrawer {
         else if (gate === 'wire') {
             // If wire start specified, draw wire
             if (x2 !== null && y2 !== null) {
+                if (power) {
+                    context.strokeStyle = this.powerColor;
+                    context.fillStyle = this.powerColor;
+                }
+                else {
+                    context.strokeStyle = this.wireColor;
+                    context.fillStyle = this.wireColor;
+                }
                 this.drawWire(context, x, y, x2, y2);
             }
             // If no wire start, just draw a dot
@@ -162,17 +168,22 @@ function LogicCircuit() {
 
     // Make the visual canvas display the current circuit board
     function updateMainCanvas() {
+        circuitLogicBoard.calc();
         const context = getMainContext();
         context.reset();
-        // for (let gate of circuitLogicBoard.gates) {
-        //     mainGateDrawer.drawGate(gate.gateType, context, gate.power, gate.x, gate.y);
-        // }
-        // for (let wire of circuitLogicBoard.wires) {
-        //     mainGateDrawer.drawGate('wire', context, wire.power, wire.x, wire.y, wire.x2, wire.y2);
-        // }
+        for (let x = 0; x < CANVAS_SIZE; x++) {
+            for (let y = 0; y < CANVAS_SIZE; y++) {
+                let cell = circuitLogicBoard.board[x][y];
+                if (cell.gate) {
+                    mainGateDrawer.drawGate(cell.gate, context, cell.power, x, y);
+                }
+                for (let wire of cell.wires) {
+                    mainGateDrawer.drawGate('wire',context,cell.power,x,y,wire.x,wire.y);
+                }
+            }
+        }
 
         // Build the graph
-        circuitLogicBoard.calc();
     }
 
     // Clear the hint canvas
@@ -210,6 +221,7 @@ function LogicCircuit() {
             clientX = newX;
             clientY = newY;
             updateHintCanvas();
+            console.log(circuitLogicBoard.board[newX][newY]);
         }
     }
 
