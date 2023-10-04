@@ -181,7 +181,7 @@ export class LogicCircuitBoard {
                         this.board[x][y].power = 1;
                     }
                     else {
-                        this.board[x][y + 1].power = 0;
+                        this.board[x + 1][y].power = 0;
                         this.board[x][y].power = 0;
                     }
                 }
@@ -209,6 +209,14 @@ export class LogicCircuitBoard {
         return 0;
     }
 
+    resetPower() {
+        for (let x = 0; x < this.size; x++) {
+            for (let y = 0; y < this.size; y++) {
+                this.board[x][y].power = this.hasPower(x, y);
+            }
+        }
+    }
+
     updatePower() {
         for (let x = 0; x < this.size; x++) {
             for (let y = 0; y < this.size; y++) {
@@ -218,15 +226,16 @@ export class LogicCircuitBoard {
     }
 
     calc() {
+        this.resetPower();
         for (let i = 0; i < 50; i++) {
             for (let x = 0; x < this.size; x++) {
                 for (let y = 0; y < this.size; y++) {
                     this.updateNeighbors(x, y);
                 }
             }
+            this.propogateGates();
+            this.updatePower();
         }
-        this.propogateGates();
-        this.updatePower();
         console.log(this.board);
     }
 }
