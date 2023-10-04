@@ -221,6 +221,7 @@ function LogicCircuit() {
             clientX = newX;
             clientY = newY;
             updateHintCanvas();
+            console.log(clientX);
             console.log(circuitLogicBoard.board[newX][newY]);
         }
     }
@@ -269,9 +270,9 @@ function LogicCircuit() {
     return (
         <>
             <div className={"relative h-[" + TOTAL_SIZE + "px]"}>
-                <canvas ref={gridCanvasRef} className="absolute bg-black" width={CANVAS_SIZE * CELL_SIZE} height={CANVAS_SIZE * CELL_SIZE}></canvas>
-                <canvas ref={mainCanvasRef} className="absolute" width={CANVAS_SIZE * CELL_SIZE} height={CANVAS_SIZE * CELL_SIZE}></canvas>
-                <canvas ref={hintCanvasRef} className="absolute" width={CANVAS_SIZE * CELL_SIZE} height={CANVAS_SIZE * CELL_SIZE}
+                <canvas ref={gridCanvasRef} className="absolute bg-black" width={(CANVAS_SIZE - 1) * CELL_SIZE} height={(CANVAS_SIZE - 1) * CELL_SIZE}></canvas>
+                <canvas ref={mainCanvasRef} className="absolute" width={(CANVAS_SIZE - 1) * CELL_SIZE} height={(CANVAS_SIZE - 1) * CELL_SIZE}></canvas>
+                <canvas ref={hintCanvasRef} className="absolute" width={(CANVAS_SIZE - 1) * CELL_SIZE} height={(CANVAS_SIZE - 1) * CELL_SIZE}
                     onMouseLeave={clearHintCanvas} onMouseMove={handleCanvasMove} onMouseDown={handleCanvasClick}></canvas>
             </div>
             <div className="absolute mt-[600px]">
