@@ -71,6 +71,46 @@ class GateDrawer {
         context.fill();
     }
 
+    drawSwitch(context, x, y, power) {
+        context.lineWidth = 2;
+        context.beginPath();
+        context.moveTo((x - 1) * this.scale, (y - 1) * this.scale);
+        context.lineTo((x - 1) * this.scale, (y + 1) * this.scale);
+        context.lineTo((x + 1) * this.scale, (y + 1) * this.scale);
+        context.lineTo((x + 1) * this.scale, (y - 1) * this.scale);
+        context.closePath();
+        context.strokeStyle = this.gateStrokeColor;
+        if (power) {
+            context.fillStyle = this.powerColor;
+        }
+        else {
+            context.fillStyle = this.gateFillColor;
+        }
+        context.fill();
+        context.stroke();
+
+        if (power) {
+            context.beginPath();
+            context.moveTo((x - 0.35) * this.scale, (y - 0.5) * this.scale);
+            context.lineTo((x - 0.35) * this.scale, y * this.scale);
+            context.lineTo((x + 0.35) * this.scale, y * this.scale);
+            context.lineTo((x + 0.35) * this.scale, (y - 0.5) * this.scale);
+            context.closePath();
+            context.fillStyle = this.gateStrokeColor;
+            context.fill();
+        }
+        else {
+            context.beginPath();
+            context.moveTo((x - 0.35) * this.scale, (y + 0.5) * this.scale);
+            context.lineTo((x - 0.35) * this.scale, y * this.scale);
+            context.lineTo((x + 0.35) * this.scale, y * this.scale);
+            context.lineTo((x + 0.35) * this.scale, (y + 0.5) * this.scale);
+            context.closePath();
+            context.fillStyle = this.gateStrokeColor;
+            context.fill();
+        }
+    }
+
     drawGate(gate, context, power, x, y, x2 = null, y2 = null) {
         // Select proper fill color
         if (power) context.fillStyle = this.powerColor;
@@ -182,8 +222,7 @@ function LogicCircuit() {
                 }
             }
         }
-
-        // Build the graph
+        mainGateDrawer.drawSwitch(context, 2, 2, 0);
     }
 
     // Clear the hint canvas
