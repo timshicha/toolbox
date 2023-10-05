@@ -222,7 +222,10 @@ function LogicCircuit() {
                 }
             }
         }
-        mainGateDrawer.drawSwitch(context, 2, 2, 0);
+        mainGateDrawer.drawSwitch(context, 2, 7, circuitLogicBoard.board[2][7].power);
+        mainGateDrawer.drawSwitch(context, 2, 15, circuitLogicBoard.board[2][15].power);
+        mainGateDrawer.drawSwitch(context, 2, 23, circuitLogicBoard.board[2][23].power);
+        mainGateDrawer.drawSwitch(context, 2, 31, circuitLogicBoard.board[2][31].power);
     }
 
     // Clear the hint canvas
@@ -267,6 +270,16 @@ function LogicCircuit() {
 
     // When the user clicks in the canvas
     function handleCanvasClick() {
+        // If clicked on switch
+        if (clientX === 2 && (
+            clientY === 7 ||
+            clientY === 15 ||
+            clientY === 23 ||
+            clientY === 31
+        )) {
+            circuitLogicBoard.toggleSwitch(clientX, clientY);
+            return;
+        }
         // If user is trying to add a wire
         if (toolInHand === 'wire') {
             // See if user already selected first point

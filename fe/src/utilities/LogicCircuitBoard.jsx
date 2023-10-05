@@ -118,6 +118,10 @@ export class LogicCircuitBoard {
                 };
             }
         }
+        this.addSwitch(2, 7);
+        this.addSwitch(2, 15);
+        this.addSwitch(2, 23);
+        this.addSwitch(2, 31);
     }
 
     addWire(x, y, x2, y2) {
@@ -128,6 +132,13 @@ export class LogicCircuitBoard {
 
     addGate(gateType, x, y) {
         this.board[x][y].gate = gateType;
+        this.board[x + 1][y].onBy.push({ x: x + 1, y: y });
+        this.board[x][y].onBy.push({ x: x, y: y });
+        return true;
+    }
+
+    addSwitch(x, y) {
+        this.board[x][y].gate = 'switch';
         this.board[x + 1][y].onBy.push({ x: x + 1, y: y });
         this.board[x][y].onBy.push({ x: x, y: y });
         return true;
@@ -210,11 +221,26 @@ export class LogicCircuitBoard {
     }
 
     resetPower() {
+        // Save the switches
+        let switches = [
+            this.board[2][7].power,
+            this.board[2][15].power,
+            this.board[2][23].power,
+            this.board[2][31].power
+        ];
         for (let x = 0; x < this.size; x++) {
             for (let y = 0; y < this.size; y++) {
                 this.board[x][y].power = this.hasPower(x, y);
             }
         }
+        this.board[2][7].power = switches[0];
+        this.board[3][7].power = switches[0];
+        this.board[2][15].power = switches[1];
+        this.board[3][15].power = switches[1];
+        this.board[2][23].power = switches[2];
+        this.board[3][23].power = switches[2];
+        this.board[2][31].power = switches[3];
+        this.board[3][31].power = switches[3];
     }
 
     updatePower() {
@@ -223,6 +249,22 @@ export class LogicCircuitBoard {
                 this.board[x][y].power = this.hasPower(x, y);
             }
         }
+    }
+
+    toggleSwitch(x, y) {
+        if (this.board[x][y].gate !== 'switch') {
+            console.log("Not a switch");
+            return false;
+        }
+        if (this.board[x][y].power) {
+            this.board[x][y].power = 0;
+            this.board[x + 1][y].power = 0;
+        }
+        else {
+            this.board[x][y].power = 1;
+            this.board[x + 1][y].power = 1;
+        }
+        return true;
     }
 
     calc() {
