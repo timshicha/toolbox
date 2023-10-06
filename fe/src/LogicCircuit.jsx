@@ -262,6 +262,15 @@ function LogicCircuit() {
         if (newX !== clientX || newY !== clientY) {
             clientX = newX;
             clientY = newY;
+            // If it's over a switch, don't update canvas
+            if (clientX === 2 && (
+                clientY === 7 ||
+                clientY === 15 ||
+                clientY === 23 ||
+                clientY === 31
+            )) {
+                return;
+            }
             updateHintCanvas();
             console.log(clientX);
             console.log(circuitLogicBoard.board[newX][newY]);
@@ -278,6 +287,7 @@ function LogicCircuit() {
             clientY === 31
         )) {
             circuitLogicBoard.toggleSwitch(clientX, clientY);
+            updateMainCanvas();
             return;
         }
         // If user is trying to add a wire
