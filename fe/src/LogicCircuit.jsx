@@ -1,5 +1,10 @@
 import { useRef, useEffect } from "react";
 import { LogicCircuitBoard } from "./utilities/LogicCircuitBoard";
+import { LogicGateButton } from "./components/Buttons";
+import andImg from "./assets/images/AND.svg";
+import orImg from "./assets/images/OR.svg";
+import notImg from "./assets/images/NOT.svg";
+import wireImg from "./assets/images/wire.svg";
 
 const CANVAS_SIZE = 40;
 const CELL_SIZE = 15;
@@ -339,13 +344,12 @@ function LogicCircuit() {
                     onMouseLeave={clearHintCanvas} onMouseMove={handleCanvasMove} onMouseDown={handleCanvasClick}></canvas>
             </div>
             <div className="absolute mt-[600px]">
-                <button onClick={() => selectTool('wire')}>wire</button>
-                <button onClick={() => selectTool('AND')}>AND</button>
-                <button onClick={() => selectTool('OR')}>OR</button>
-                <button onClick={() => selectTool('NOT')}>NOT</button>
-                {/* <button onClick={circuitLogicBoard.buildGraph}>Create graph</button> */}
-            </div>
+                <LogicGateButton image={andImg} onClick={() => selectTool('AND')}> </LogicGateButton>
+                <LogicGateButton image={orImg} onClick={() => selectTool('OR')}> </LogicGateButton>
+                <LogicGateButton image={notImg} onClick={() => selectTool('NOT')}> </LogicGateButton>
+                <LogicGateButton image={wireImg} onClick={() => selectTool('wire')}> </LogicGateButton>
 
+            </div>
         </>
     );
 }
