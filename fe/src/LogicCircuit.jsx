@@ -193,6 +193,7 @@ function LogicCircuit() {
     
     useEffect(() => {
         resetGridCanvas();
+        updateMainCanvas();
     }, []);
 
     // Quick functions to get canvas context of the canvases
