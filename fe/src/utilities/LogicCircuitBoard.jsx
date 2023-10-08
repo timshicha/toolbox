@@ -124,6 +124,15 @@ export class LogicCircuitBoard {
         this.addSwitch(2, 31);
     }
 
+    // See if a point is a switch
+    isSwitch(x, y) {
+        if (x !== 2) return false;
+        if (y === 7 || y === 15 || y === 23 || y === 31) {
+            return true;
+        }
+        return false;
+    }
+
     addWire(x, y, x2, y2) {
         this.board[x][y].wires.push({ x: x2, y: y2 });
         this.board[x2][y2].wires.push({ x: x, y: y });
@@ -265,6 +274,18 @@ export class LogicCircuitBoard {
             this.board[x + 1][y].power = 1;
         }
         return true;
+    }
+
+    erase(x, y) {
+        if (this.isSwitch(x, y)) {
+            console.log("Can't delete a switch");
+            return;
+        }
+        // Erase the gate and connected wires
+        this.board[x][y].gate = null;
+        this.board[x][y].wires = [];
+        this.board[x][y].power = 0;
+        this.board[x][y].onBy = [];
     }
 
     calc() {

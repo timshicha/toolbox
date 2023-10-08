@@ -275,6 +275,7 @@ function LogicCircuit() {
                 clientY === 23 ||
                 clientY === 31
             )) {
+                
                 return;
             }
             updateHintCanvas();
@@ -318,6 +319,11 @@ function LogicCircuit() {
                 wireStartY = clientY;
             }
         }
+        // If eraser
+        else if (toolInHand === 'eraser') {
+            circuitLogicBoard.erase(clientX, clientY);
+        }
+        // If a gate
         else {
             if (!circuitLogicBoard.addGate(toolInHand, clientX, clientY)) {
                 console.log("Invalid gate placement.");
@@ -348,7 +354,7 @@ function LogicCircuit() {
                 <LogicGateButton image={orImg} onClick={() => selectTool('OR')}> </LogicGateButton>
                 <LogicGateButton image={notImg} onClick={() => selectTool('NOT')}> </LogicGateButton>
                 <LogicGateButton image={wireImg} onClick={() => selectTool('wire')}> </LogicGateButton>
-
+                <button onClick={() => selectTool('eraser')}>Eraser</button>
             </div>
         </>
     );
