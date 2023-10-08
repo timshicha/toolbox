@@ -229,6 +229,17 @@ export class LogicCircuitBoard {
         return 0;
     }
 
+    removeWire(x, y, removeX, removeY) {
+        for (let i = 0; i < this.board[x][y].wires.length; i++) {
+            let wire = this.board[x][y].wires[i];
+            if (wire.x === removeX && wire.y === removeY) {
+                this.board[x][y].wires.splice(i, 1);
+                return true;
+            }
+        }
+        return false;
+    }
+
     resetPower() {
         // Save the switches
         let switches = [
@@ -283,9 +294,14 @@ export class LogicCircuitBoard {
         }
         // Erase the gate and connected wires
         this.board[x][y].gate = null;
-        this.board[x][y].wires = [];
         this.board[x][y].power = 0;
         this.board[x][y].onBy = [];
+        // Before erasing the wires, erase this wire from the
+        // other end
+        for (let wire of this.board[x][y].wires) {
+            this.removeWire(wire.x, wire.y, x, y);
+        }
+        this.board[x][y].wires = [];
     }
 
     calc() {
