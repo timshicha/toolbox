@@ -240,6 +240,17 @@ export class LogicCircuitBoard {
         return false;
     }
 
+    removeOnBy(x, y, removeX, removeY) {
+        for (let i = 0; i < this.board[x][y].onBy.length; i++) {
+            let onBy = this.board[x][y].onBy[i];
+            if (onBy.x === removeX && onBy.y === removeY) {
+                this.board[x][y].onBy.splice(i, 1);
+                return true;
+            }
+        }
+        return false;
+    }
+
     resetPower() {
         // Save the switches
         let switches = [
@@ -293,7 +304,9 @@ export class LogicCircuitBoard {
             return;
         }
         // Erase the gate and connected wires
-        this.board[x][y].gate = null;
+        if (this.board[x][y].gate) {
+            this.board[x][y].gate = null;
+        }
         this.board[x][y].power = 0;
         this.board[x][y].onBy = [];
         // Before erasing the wires, erase this wire from the
@@ -304,8 +317,29 @@ export class LogicCircuitBoard {
         this.board[x][y].wires = [];
     }
 
+    
+    resetOnBy() {
+        for (let x = 0; x < this.board.length; x++) {
+            for (let y = 0; y < this.board.length; y++) {
+                this.board[x][y].onBy = [];
+            }
+        }
+        for (let x = 0; x < this.board.length; x++) {
+            for (let y = 0; y < this.board.length; y++) {
+                // If a gate, reAdd onBy
+                if (this.board[x][y].gate === 'switch') {
+                    this.addSwitch(x, y);
+                }
+                else if(this.board[x][y].gate) {
+                    this.addGate(this.board[x][y].gate, x, y);
+                }
+            }
+        }
+    }
+
     calc() {
         this.resetPower();
+        this.resetOnBy();
         for (let i = 0; i < 50; i++) {
             for (let x = 0; x < this.size; x++) {
                 for (let y = 0; y < this.size; y++) {
