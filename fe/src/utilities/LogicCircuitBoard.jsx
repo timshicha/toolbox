@@ -173,6 +173,28 @@ export class LogicCircuitBoard {
         }
     }
 
+    redo() {
+        if (this.historyIndex >= this.history.length) {
+            return;
+        }
+        for (let action of this.history[this.historyIndex]) {
+            if (action.object === 'wire' && action.created) {
+                this.addWire(action.x, action.y, action.x2, action.y2, 0);
+            }
+            else if (action.object === 'wire' && !action.created) {
+                this.removeWire(action.x, action.y, action.x2, action.y2, 0);
+                this.removeWire(action.x2, action.y2, action.x, action.y, 0);
+            }
+            else if (action.created) {
+                this.addGate(action.object, action.x, action.y, 0);
+            }
+            else if (!action.created) {
+                this.removeGate(action.x, action.y, 0);
+            }
+        }
+        this.historyIndex++;
+    }
+
     // See if a point is a switch
     isSwitch(x, y) {
         if (x !== 2) return false;

@@ -343,6 +343,11 @@ function LogicCircuit() {
         updateMainCanvas();
     }
 
+    function redo() {
+        circuitLogicBoard.redo();
+        updateMainCanvas();
+    }
+
     return (
         <>
             <div className={"relative h-[" + TOTAL_SIZE + "px]"}>
@@ -358,6 +363,7 @@ function LogicCircuit() {
                 <LogicGateButton image={wireImg} onClick={() => selectTool('wire')}> </LogicGateButton>
                 <button onClick={() => selectTool('eraser')}>Eraser</button>
                 <button onClick={undo}>Undo</button>
+                <button onClick={redo}>Redo</button>
             </div>
         </>
     );
