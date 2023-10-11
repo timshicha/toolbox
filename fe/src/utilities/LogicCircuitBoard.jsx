@@ -1,5 +1,3 @@
-
-
 class Point {
     // Create a point struct
     static createPoint(x, y) {
@@ -107,6 +105,8 @@ export class LogicCircuitBoard {
         // and wires that affect or affected by that cell.
         this.board = new Array(size).fill(null);
         this.size = size;
+        this.history = [];
+        this.historyIndex = [];
         for (let i = 0; i < size; i++) {
             this.board[i] = new Array(size).fill(null);
             for (let j = 0; j < size; j++) {
@@ -124,6 +124,49 @@ export class LogicCircuitBoard {
         this.addSwitch(2, 31);
     }
 
+    // Record an action that happens on the board
+    // (This is used to support the undo feature).
+    // If the object was placed, created == 1.
+    // If the object was removed, created == 0.
+    createAction(object, created, x, y, x2=null, y2=null) {
+        return {
+            object: object,
+            created: created,
+            x: x,
+            y: y,
+            x2: x2,
+            y2: y2
+        };
+    }
+
+    addToHistory(actionList) {
+        this.history.push(actionList);
+        this.historyIndex++;
+        console.log(this.historyIndex);
+    }
+
+    undo() {
+        // Go back an index and undo what was done
+        if (this.historyIndex === 0) {
+            return;
+        }
+        this.historyIndex--;
+        for (let action of this.history[this.historyIndex]) {
+            if (action.object === 'wire' && action.created) {
+                this.removeWire(action.x, action.y, action.x2, action.y2);
+            }
+            else if (action.object === 'wire' && !action.created) {
+                this.addWire(action.x, action.y, action.x2, action.y2);
+            }
+            else if (action.created) {
+                this.removeGate(action.x, action.y);
+            }
+            else if (!action.created) {
+                this.addGate(action.object, action.x, action.y);
+            }
+        }
+    }
+
     // See if a point is a switch
     isSwitch(x, y) {
         if (x !== 2) return false;
@@ -136,6 +179,7 @@ export class LogicCircuitBoard {
     addWire(x, y, x2, y2) {
         this.board[x][y].wires.push({ x: x2, y: y2 });
         this.board[x2][y2].wires.push({ x: x, y: y });
+        this.addToHistory([this.createAction('wire', 1, x, y, x2, y2)]);
         return true;
     }
 
@@ -143,6 +187,7 @@ export class LogicCircuitBoard {
         this.board[x][y].gate = gateType;
         this.board[x + 1][y].onBy.push({ x: x + 1, y: y });
         this.board[x][y].onBy.push({ x: x, y: y });
+        this.addToHistory([this.createAction(gateType, 1, x, y)]);
         return true;
     }
 
@@ -284,7 +329,6 @@ export class LogicCircuitBoard {
 
     toggleSwitch(x, y) {
         if (this.board[x][y].gate !== 'switch') {
-            console.log("Not a switch");
             return false;
         }
         if (this.board[x][y].power) {
@@ -297,25 +341,35 @@ export class LogicCircuitBoard {
         }
         return true;
     }
+    
+    removeGate(x, y) {
+        this.board[x][y].gate = null;
+    }
 
     erase(x, y) {
         if (this.isSwitch(x, y)) {
             console.log("Can't delete a switch");
             return;
         }
+        let actionList = [];
         // Erase the gate and connected wires
         if (this.board[x][y].gate) {
-            this.board[x][y].gate = null;
+            // Record the removal for undo to work
+            actionList.push(this.createAction(this.board[x][y].gate, 0, x, y));
         }
         this.board[x][y].power = 0;
         this.board[x][y].onBy = [];
         // Before erasing the wires, erase this wire from the
         // other end
         for (let wire of this.board[x][y].wires) {
+            actionList.push(this.createAction('wire', 0, x, y, wire.x, wire.y));
             this.removeWire(wire.x, wire.y, x, y);
         }
         this.board[x][y].wires = [];
+        this.addToHistory(actionList);
     }
+
+
 
     
     resetOnBy() {
@@ -349,6 +403,5 @@ export class LogicCircuitBoard {
             this.propogateGates();
             this.updatePower();
         }
-        console.log(this.board);
     }
 }

@@ -238,7 +238,6 @@ function LogicCircuit() {
     function clearHintCanvas() {
         const context = getHintContext();
         context.reset();
-        console.log("ok");
     }
 
     // Display a gate where the user is hovering
@@ -279,8 +278,6 @@ function LogicCircuit() {
                 return;
             }
             updateHintCanvas();
-            console.log(clientX);
-            console.log(circuitLogicBoard.board[newX][newY]);
         }
     }
 
@@ -341,6 +338,11 @@ function LogicCircuit() {
         wireStartY = null;
     }
 
+    function undo() {
+        circuitLogicBoard.undo();
+        updateMainCanvas();
+    }
+
     return (
         <>
             <div className={"relative h-[" + TOTAL_SIZE + "px]"}>
@@ -355,6 +357,7 @@ function LogicCircuit() {
                 <LogicGateButton image={notImg} onClick={() => selectTool('NOT')}> </LogicGateButton>
                 <LogicGateButton image={wireImg} onClick={() => selectTool('wire')}> </LogicGateButton>
                 <button onClick={() => selectTool('eraser')}>Eraser</button>
+                <button onClick={undo}>Undo</button>
             </div>
         </>
     );
