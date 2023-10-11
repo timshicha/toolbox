@@ -140,12 +140,16 @@ export class LogicCircuitBoard {
     }
 
     addToHistory(actionList) {
+        if (this.historyIndex < this.history.length) {
+            this.history.splice(this.historyIndex);
+        }
         this.history.push(actionList);
         this.historyIndex++;
-        console.log(this.historyIndex);
+        console.log(this.history);
     }
 
     undo() {
+        console.log(this.historyIndex);
         // Go back an index and undo what was done
         if (this.historyIndex === 0) {
             return;
@@ -153,16 +157,18 @@ export class LogicCircuitBoard {
         this.historyIndex--;
         for (let action of this.history[this.historyIndex]) {
             if (action.object === 'wire' && action.created) {
-                this.removeWire(action.x, action.y, action.x2, action.y2);
+                this.removeWire(action.x, action.y, action.x2, action.y2, 0);
+                this.removeWire(action.x2, action.y2, action.x, action.y, 0);
+
             }
             else if (action.object === 'wire' && !action.created) {
-                this.addWire(action.x, action.y, action.x2, action.y2);
+                this.addWire(action.x, action.y, action.x2, action.y2, 0);
             }
             else if (action.created) {
-                this.removeGate(action.x, action.y);
+                this.removeGate(action.x, action.y, 0);
             }
             else if (!action.created) {
-                this.addGate(action.object, action.x, action.y);
+                this.addGate(action.object, action.x, action.y, 0);
             }
         }
     }
@@ -176,18 +182,22 @@ export class LogicCircuitBoard {
         return false;
     }
 
-    addWire(x, y, x2, y2) {
+    addWire(x, y, x2, y2, addToHistory=1) {
         this.board[x][y].wires.push({ x: x2, y: y2 });
         this.board[x2][y2].wires.push({ x: x, y: y });
-        this.addToHistory([this.createAction('wire', 1, x, y, x2, y2)]);
+        if (addToHistory) {
+            this.addToHistory([this.createAction('wire', 1, x, y, x2, y2)]);
+        }
         return true;
     }
 
-    addGate(gateType, x, y) {
+    addGate(gateType, x, y, addToHistory=1) {
         this.board[x][y].gate = gateType;
         this.board[x + 1][y].onBy.push({ x: x + 1, y: y });
         this.board[x][y].onBy.push({ x: x, y: y });
-        this.addToHistory([this.createAction(gateType, 1, x, y)]);
+        if (addToHistory) {
+            this.addToHistory([this.createAction(gateType, 1, x, y)]);
+        }
         return true;
     }
 
@@ -342,7 +352,7 @@ export class LogicCircuitBoard {
         return true;
     }
     
-    removeGate(x, y) {
+    removeGate(x, y, addToHistory=0) {
         this.board[x][y].gate = null;
     }
 
@@ -385,7 +395,7 @@ export class LogicCircuitBoard {
                     this.addSwitch(x, y);
                 }
                 else if(this.board[x][y].gate) {
-                    this.addGate(this.board[x][y].gate, x, y);
+                    this.addGate(this.board[x][y].gate, x, y, 0);
                 }
             }
         }
