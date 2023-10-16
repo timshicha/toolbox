@@ -389,6 +389,7 @@ export class LogicCircuitBoard {
             // Record the removal for undo to work
             actionList.push(this.createAction(this.board[x][y].gate, 0, x, y));
         }
+        this.board[x][y].gate = null;
         this.board[x][y].power = 0;
         this.board[x][y].onBy = [];
         // Before erasing the wires, erase this wire from the
