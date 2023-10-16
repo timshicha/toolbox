@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { LogicCircuitBoard } from "./utilities/LogicCircuitBoard";
 import { LogicGateButton } from "./components/Buttons";
 import andImg from "./assets/images/AND.svg";
@@ -186,9 +186,14 @@ function LogicCircuit() {
     const gridCanvasRef = useRef();
     const mainCanvasRef = useRef();
     const hintCanvasRef = useRef();
+    const andBtnRef = useRef();
+    const orBtnRef = useRef();
+    const notBtnRef = useRef();
+    const wireBtnRef = useRef();
+
     let clientX = 0;
     let clientY = 0;
-    let toolInHand = 'wire';
+    let toolInHand;
     let wireStartX = null;
     let wireStartY = null;
     const gridDrawer = new GridDrawer();
@@ -199,6 +204,7 @@ function LogicCircuit() {
     useEffect(() => {
         resetGridCanvas();
         updateMainCanvas();
+        selectTool('wire');
     }, []);
 
     // Quick functions to get canvas context of the canvases
@@ -333,7 +339,25 @@ function LogicCircuit() {
     }
 
     function selectTool(tool) {
+        // return;
+        andBtnRef.current.deselectTool();
+        orBtnRef.current.deselectTool();
+        notBtnRef.current.deselectTool();
+        wireBtnRef.current.deselectTool();
         toolInHand = tool;
+        if (tool === 'AND') {
+            andBtnRef.current.selectTool();
+        }
+        else if (tool === 'OR') {
+            orBtnRef.current.selectTool();
+        }
+        else if (tool === 'NOT') {
+            notBtnRef.current.selectTool();
+        }
+        else if (tool === 'wire') {
+            wireBtnRef.current.selectTool();
+        }
+
         wireStartX = null;
         wireStartY = null;
     }
@@ -357,10 +381,11 @@ function LogicCircuit() {
                     onMouseLeave={clearHintCanvas} onMouseMove={handleCanvasMove} onMouseDown={handleCanvasClick}></canvas>
             </div>
             <div className="absolute mt-[600px]">
-                <LogicGateButton image={andImg} onClick={() => selectTool('AND')}> </LogicGateButton>
-                <LogicGateButton image={orImg} onClick={() => selectTool('OR')}> </LogicGateButton>
-                <LogicGateButton image={notImg} onClick={() => selectTool('NOT')}> </LogicGateButton>
-                <LogicGateButton image={wireImg} onClick={() => selectTool('wire')}> </LogicGateButton>
+                <LogicGateButton image={andImg} onClick={() => selectTool('AND')} ref={andBtnRef}></LogicGateButton>
+                <LogicGateButton image={orImg} onClick={() => selectTool('OR')} ref={orBtnRef}></LogicGateButton>
+                <LogicGateButton image={notImg} onClick={() => selectTool('NOT')} ref={notBtnRef}></LogicGateButton>
+                <LogicGateButton image={wireImg} onClick={() => selectTool('wire')} ref={wireBtnRef}></LogicGateButton>
+
                 <button onClick={() => selectTool('eraser')}>Eraser</button>
                 <button onClick={undo}>Undo</button>
                 <button onClick={redo}>Redo</button>
