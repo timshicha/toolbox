@@ -5,6 +5,7 @@ import andImg from "./assets/images/AND.svg";
 import orImg from "./assets/images/OR.svg";
 import notImg from "./assets/images/NOT.svg";
 import wireImg from "./assets/images/wire.svg";
+import { downloadFile } from "./utilities/File";
 
 const CANVAS_SIZE = 40;
 const CELL_SIZE = 15;
@@ -414,6 +415,12 @@ function LogicCircuit() {
         updateMainCanvas();
     }
 
+    function toJson() {
+        let jsonString = circuitLogicBoard.toJsonString();
+        downloadFile(jsonString, 'circuitMap.json', 'text/plain');
+        
+    }
+
     return (
         <>
             <div className={"relative h-[" + TOTAL_SIZE + "px]"}>
@@ -431,6 +438,7 @@ function LogicCircuit() {
                 <button onClick={() => selectTool('eraser')}>Eraser</button>
                 <button onClick={undo}>Undo</button>
                 <button onClick={redo}>Redo</button>
+                <button onClick={toJson}>Save</button>
             </div>
         </>
     );

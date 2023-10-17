@@ -204,7 +204,12 @@ export class LogicCircuitBoard {
         return false;
     }
 
-    addWire(x, y, x2, y2, addToHistory=1) {
+    addWire(x, y, x2, y2, addToHistory = 1) {
+        // Make sure the wire does not already exist
+        if (Point.pointExists({ x: x2, y: y2 }, this.board[x][y].wires)) {
+            return;
+        }
+
         this.board[x][y].wires.push({ x: x2, y: y2 });
         this.board[x2][y2].wires.push({ x: x, y: y });
         if (addToHistory) {
@@ -402,9 +407,6 @@ export class LogicCircuitBoard {
         this.addToHistory(actionList);
     }
 
-
-
-    
     resetOnBy() {
         for (let x = 0; x < this.board.length; x++) {
             for (let y = 0; y < this.board.length; y++) {
@@ -436,5 +438,30 @@ export class LogicCircuitBoard {
             this.propogateGates();
             this.updatePower();
         }
+    }
+
+    toJsonString() {
+        // Create list of gates and wires
+        let gates = [];
+        let wires = [];
+        for (let x = 0; x < this.size; x++) {
+            for (let y = 0; y < this.size; y++) {
+                // If there's a gate and it's not a switch or a light,
+                // then store it.
+                let gate = this.board[x][y].gate;
+                if (gate && gate !== 'switch' && gate !== 'light') {
+                    gates.push({ x: x, y: y, gate: gate });
+                }
+                // Add each wire as well
+                for (let wire of this.board[x][y].wires) {
+                    wires.push({ x: x, y: y, x2: wire.x, y2: wire.y });
+                }
+            }
+        }
+        let obj = {
+            gates: gates,
+            wires: wires
+        };
+        return JSON.stringify(obj);
     }
 }
