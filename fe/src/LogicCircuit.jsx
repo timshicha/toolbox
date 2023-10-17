@@ -5,6 +5,8 @@ import andImg from "./assets/images/AND.svg";
 import orImg from "./assets/images/OR.svg";
 import notImg from "./assets/images/NOT.svg";
 import wireImg from "./assets/images/wire.svg";
+import downloadImg from "./assets/images/download.svg";
+import uploadImg from "./assets/images/upload.svg";
 import { downloadFile } from "./utilities/File";
 
 const CANVAS_SIZE = 40;
@@ -457,10 +459,10 @@ function LogicCircuit() {
                 <button onClick={() => selectTool('eraser')}>Eraser</button>
                 <button onClick={undo}>Undo</button>
                 <button onClick={redo}>Redo</button>
-                <button onClick={toJson}>Save</button>
+                <LogicGateButton image={downloadImg} onClick={toJson}></LogicGateButton>
                 <div>
                     <input type="file" ref={fileUploadRef} />
-                    <button onClick={uploadJson}>Load</button>
+                    <LogicGateButton image={uploadImg} onClick={uploadJson}></LogicGateButton>
                 </div>
             </div>
         </>
