@@ -32,6 +32,43 @@ class GateDrawer {
         context.stroke();
     }
 
+    drawLight(context, x, y, power) {
+        context.strokeStyle = this.gateStrokeColor;
+        if (power) {
+            context.fillStyle = this.powerColor;
+        }
+        else {
+            context.fillStyle = this.gateFillColor;
+        }
+        context.beginPath();
+
+        // Draw inside
+        context.arc(x * this.scale, (y - 0.25) * this.scale, 3 / 4 * this.scale, 0, 3 * Math.PI);
+        context.moveTo((x - 0.25) * this.scale, (y + 1) * this.scale);
+        context.lineTo((x - 0.25) * this.scale, (y + 0.5) * this.scale);
+        context.lineTo((x + 0.25) * this.scale, (y + 0.5) * this.scale);
+        context.lineTo((x + 0.25) * this.scale, (y + 1) * this.scale);
+        context.closePath();
+        // If on, make bright
+        if (power) context.fillStyle = '#FFFF00';
+        context.fill();
+        context.stroke();
+        context.beginPath();
+        context.moveTo(x * this.scale, (y + 0.5) * this.scale);
+        context.lineTo(x * this.scale, (y - 0.25) * this.scale);
+        context.moveTo((x - 0.25) * this.scale, (y - 0.25) * this.scale);
+        context.lineTo((x + 0.25) * this.scale, (y - 0.25) * this.scale);
+        context.moveTo((x - 0.25) * this.scale, y * this.scale);
+        context.lineTo((x + 0.25) * this.scale, y * this.scale);
+        context.moveTo((x - 0.25) * this.scale, (y + 0.25) * this.scale);
+        context.lineTo((x + 0.25) * this.scale, (y + 0.25) * this.scale);
+        context.stroke();
+        context.beginPath();
+        context.arc(x * this.scale, (y + 1) * this.scale, 1/10 * this.scale, 0, 2 * Math.PI);
+        context.fillStyle = '#FFFFFF';
+        context.stroke();
+    }
+
     drawOrGate(context, x, y) {
         context.beginPath();
         context.arc((x - 2) * this.scale, y * this.scale, 1.5 * this.scale, 7 * Math.PI / 4 + 0.05, Math.PI / 4 - 0.05, false);
@@ -151,6 +188,9 @@ class GateDrawer {
                 this.drawWire(context, x, y, x, y);
             }
         }
+        else if (gate === 'light') {
+            this.drawGate('light', context, x, y);
+        }
     }
 }
 
@@ -238,6 +278,7 @@ function LogicCircuit() {
         mainGateDrawer.drawSwitch(context, 2, 15, circuitLogicBoard.board[2][15].power);
         mainGateDrawer.drawSwitch(context, 2, 23, circuitLogicBoard.board[2][23].power);
         mainGateDrawer.drawSwitch(context, 2, 31, circuitLogicBoard.board[2][31].power);
+        mainGateDrawer.drawLight(context, 37, 20, circuitLogicBoard.board[37][21].power);
     }
 
     // Clear the hint canvas
