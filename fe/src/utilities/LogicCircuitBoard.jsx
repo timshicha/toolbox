@@ -100,13 +100,13 @@ class Point {
 }
 
 export class LogicCircuitBoard {
-    constructor(size) {
+    constructor(size, jsonString=null) {
         // Create matrix of lists. Each cell contains the gates
         // and wires that affect or affected by that cell.
         this.board = new Array(size).fill(null);
         this.size = size;
         this.history = [];
-        this.historyIndex = [];
+        this.historyIndex = 0;
         for (let i = 0; i < size; i++) {
             this.board[i] = new Array(size).fill(null);
             for (let j = 0; j < size; j++) {
@@ -122,6 +122,17 @@ export class LogicCircuitBoard {
         this.addSwitch(2, 15);
         this.addSwitch(2, 23);
         this.addSwitch(2, 31);
+
+        // If a json string was provided, load from it
+        if (jsonString) {
+            let obj = JSON.parse(jsonString);
+            for (let gate of obj.gates) {
+                this.addGate(gate.gate, gate.x, gate.y, 0);
+            }
+            for (let wire of obj.wires) {
+                this.addWire(wire.x, wire.y, wire.x2, wire.y2, 0);
+            }
+        }
     }
 
     // Record an action that happens on the board

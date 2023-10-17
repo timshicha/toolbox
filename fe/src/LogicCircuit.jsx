@@ -232,6 +232,7 @@ function LogicCircuit() {
     const orBtnRef = useRef();
     const notBtnRef = useRef();
     const wireBtnRef = useRef();
+    const fileUploadRef = useRef();
 
     let clientX = 0;
     let clientY = 0;
@@ -241,7 +242,7 @@ function LogicCircuit() {
     const gridDrawer = new GridDrawer();
     const mainGateDrawer = new GateDrawer();
     const hintGateDrawer = new GateDrawer(CELL_SIZE, '#444444AA', '#444444AA', '#444444AA');
-    const circuitLogicBoard = new LogicCircuitBoard(CANVAS_SIZE);
+    let circuitLogicBoard = new LogicCircuitBoard(CANVAS_SIZE);
     
     useEffect(() => {
         resetGridCanvas();
@@ -381,6 +382,11 @@ function LogicCircuit() {
         updateMainCanvas();
     }
 
+    function replaceMapWithJson(jsonString) {
+        circuitLogicBoard = new LogicCircuitBoard(CANVAS_SIZE, jsonString);
+        updateMainCanvas();
+    }
+
     function selectTool(tool) {
         // return;
         andBtnRef.current.deselectTool();
@@ -417,9 +423,22 @@ function LogicCircuit() {
 
     function toJson() {
         let jsonString = circuitLogicBoard.toJsonString();
-        downloadFile(jsonString, 'circuitMap.json', 'text/plain');
-        
+        downloadFile(jsonString, 'circuitMap.json', 'text/plain');   
     }
+    
+    async function uploadJson() {
+        let files = fileUploadRef.current.files;
+        if (files.length <= 0) {
+            alert("Please select a file first.");
+            return;
+        }
+        let fr = new FileReader();
+        fr.onload = function (e) {
+            replaceMapWithJson(e.target.result);
+        }
+        fr.readAsText(files[0]);
+    }
+
 
     return (
         <>
@@ -439,6 +458,10 @@ function LogicCircuit() {
                 <button onClick={undo}>Undo</button>
                 <button onClick={redo}>Redo</button>
                 <button onClick={toJson}>Save</button>
+                <div>
+                    <input type="file" ref={fileUploadRef} />
+                    <button onClick={uploadJson}>Load</button>
+                </div>
             </div>
         </>
     );
