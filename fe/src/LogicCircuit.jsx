@@ -36,6 +36,7 @@ class GateDrawer {
         context.strokeStyle = this.gateStrokeColor;
         if (power) {
             context.fillStyle = this.powerColor;
+            context.strokeStyle = '#999999';
         }
         else {
             context.fillStyle = this.gateFillColor;
