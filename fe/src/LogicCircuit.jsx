@@ -7,6 +7,9 @@ import notImg from "./assets/images/NOT.svg";
 import wireImg from "./assets/images/wire.svg";
 import downloadImg from "./assets/images/download.svg";
 import uploadImg from "./assets/images/upload.svg";
+import eraserImg from "./assets/images/eraser.svg";
+import undoImg from "./assets/images/undo.svg";
+import redoImg from "./assets/images/redo.svg";
 import { downloadFile } from "./utilities/File";
 
 const CANVAS_SIZE = 40;
@@ -234,6 +237,7 @@ function LogicCircuit() {
     const orBtnRef = useRef();
     const notBtnRef = useRef();
     const wireBtnRef = useRef();
+    const eraserBtnRef = useRef();
     const fileUploadRef = useRef();
 
     let clientX = 0;
@@ -395,6 +399,7 @@ function LogicCircuit() {
         orBtnRef.current.deselectTool();
         notBtnRef.current.deselectTool();
         wireBtnRef.current.deselectTool();
+        eraserBtnRef.current.deselectTool();
         toolInHand = tool;
         if (tool === 'AND') {
             andBtnRef.current.selectTool();
@@ -407,6 +412,9 @@ function LogicCircuit() {
         }
         else if (tool === 'wire') {
             wireBtnRef.current.selectTool();
+        }
+        else if (tool === 'eraser') {
+            eraserBtnRef.current.selectTool();
         }
 
         wireStartX = null;
@@ -455,10 +463,9 @@ function LogicCircuit() {
                 <LogicGateButton image={orImg} onClick={() => selectTool('OR')} ref={orBtnRef}></LogicGateButton>
                 <LogicGateButton image={notImg} onClick={() => selectTool('NOT')} ref={notBtnRef}></LogicGateButton>
                 <LogicGateButton image={wireImg} onClick={() => selectTool('wire')} ref={wireBtnRef}></LogicGateButton>
-
-                <button onClick={() => selectTool('eraser')}>Eraser</button>
-                <button onClick={undo}>Undo</button>
-                <button onClick={redo}>Redo</button>
+                <LogicGateButton image={eraserImg} onClick={() => selectTool('eraser')} ref={eraserBtnRef}></LogicGateButton>
+                <LogicGateButton image={undoImg} onClick={undo}>Undo</LogicGateButton>
+                <LogicGateButton image={redoImg} onClick={redo}>Redo</LogicGateButton>
                 <LogicGateButton image={downloadImg} onClick={toJson}></LogicGateButton>
                 <div>
                     <input type="file" ref={fileUploadRef} />
