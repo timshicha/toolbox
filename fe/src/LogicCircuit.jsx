@@ -452,26 +452,32 @@ function LogicCircuit() {
 
     return (
         <>
-            <div className={"relative h-[" + TOTAL_SIZE + "px]"}>
-                <canvas ref={gridCanvasRef} className="absolute bg-black" width={(CANVAS_SIZE - 1) * CELL_SIZE} height={(CANVAS_SIZE - 1) * CELL_SIZE}></canvas>
-                <canvas ref={mainCanvasRef} className="absolute" width={(CANVAS_SIZE - 1) * CELL_SIZE} height={(CANVAS_SIZE - 1) * CELL_SIZE}></canvas>
-                <canvas ref={hintCanvasRef} className="absolute" width={(CANVAS_SIZE - 1) * CELL_SIZE} height={(CANVAS_SIZE - 1) * CELL_SIZE}
-                    onMouseLeave={clearHintCanvas} onMouseMove={handleCanvasMove} onMouseDown={handleCanvasClick}></canvas>
-            </div>
-            <div className="absolute mt-[600px]">
-                <LogicGateButton image={andImg} onClick={() => selectTool('AND')} ref={andBtnRef}></LogicGateButton>
-                <LogicGateButton image={orImg} onClick={() => selectTool('OR')} ref={orBtnRef}></LogicGateButton>
-                <LogicGateButton image={notImg} onClick={() => selectTool('NOT')} ref={notBtnRef}></LogicGateButton>
-                <LogicGateButton image={wireImg} onClick={() => selectTool('wire')} ref={wireBtnRef}></LogicGateButton>
-                <LogicGateButton image={eraserImg} onClick={() => selectTool('eraser')} ref={eraserBtnRef}></LogicGateButton>
-                <LogicGateButton image={undoImg} onClick={undo}>Undo</LogicGateButton>
+            <div className="block p-[10px] pl-[70px] flex">
+                <LogicGateButton className="mr-[10px]" image={undoImg} onClick={undo}>Undo</LogicGateButton>
                 <LogicGateButton image={redoImg} onClick={redo}>Redo</LogicGateButton>
-                <LogicGateButton image={downloadImg} onClick={toJson}></LogicGateButton>
+            </div>
+            <div className="flex">
+                <div className={"relative h-[570px] p-[10px]"}>
+                    <LogicGateButton className='block mt-[10px]' image={andImg} onClick={() => selectTool('AND')} ref={andBtnRef}></LogicGateButton>
+                    <LogicGateButton className='block mt-[10px]' image={orImg} onClick={() => selectTool('OR')} ref={orBtnRef}></LogicGateButton>
+                    <LogicGateButton className='block mt-[10px]' image={notImg} onClick={() => selectTool('NOT')} ref={notBtnRef}></LogicGateButton>
+                    <LogicGateButton className='block mt-[10px]' image={wireImg} onClick={() => selectTool('wire')} ref={wireBtnRef}></LogicGateButton>
+                    <LogicGateButton className='block mt-[30px]' image={eraserImg} onClick={() => selectTool('eraser')} ref={eraserBtnRef}></LogicGateButton>
+                    <div className="absolute bottom-0">
+                        <LogicGateButton image={uploadImg} onClick={uploadJson}></LogicGateButton>
+                        <LogicGateButton className='block mt-[10px]' image={downloadImg} onClick={toJson}></LogicGateButton>
+                    </div>
+                </div>
                 <div>
-                    <input type="file" ref={fileUploadRef} />
-                    <LogicGateButton image={uploadImg} onClick={uploadJson}></LogicGateButton>
+                    <div className={"relative h-[" + TOTAL_SIZE + "px]"}>
+                        <canvas ref={gridCanvasRef} className="absolute bg-black" width={(CANVAS_SIZE - 1) * CELL_SIZE} height={(CANVAS_SIZE - 1) * CELL_SIZE}></canvas>
+                        <canvas ref={mainCanvasRef} className="absolute" width={(CANVAS_SIZE - 1) * CELL_SIZE} height={(CANVAS_SIZE - 1) * CELL_SIZE}></canvas>
+                        <canvas ref={hintCanvasRef} className="absolute" width={(CANVAS_SIZE - 1) * CELL_SIZE} height={(CANVAS_SIZE - 1) * CELL_SIZE}
+                            onMouseLeave={clearHintCanvas} onMouseMove={handleCanvasMove} onMouseDown={handleCanvasClick}></canvas>
+                    </div>
                 </div>
             </div>
+            <input type="file" ref={fileUploadRef} />
         </>
     );
 }

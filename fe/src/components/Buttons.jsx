@@ -2,11 +2,12 @@ import React, { useEffect } from 'react';
 
 class LogicGateButton extends React.Component {
 
-    constructor({ image, size = "50px", onClick }) {
+    constructor({ image, size = "50px", onClick, className }) {
         super();
         this.image = image;
         this.size = size;
         this.onClick = onClick;
+        this.className = className
 
         this.defaultColor = 'bg-gray-300';
         this.selectedColor = 'bg-blue-300';
@@ -31,7 +32,7 @@ class LogicGateButton extends React.Component {
     render() {
         return (
             <>
-                <button onClick={this.onClick} className={this.state.buttonColor + " hover:bg-gray-400 rounded-lg mx-2"}>
+                <button onClick={this.onClick} className={this.state.buttonColor + " hover:bg-gray-400 rounded-lg " + this.className}>
                     <img src={this.image} width={this.size} height={this.size} />
                 </button>
             </>
