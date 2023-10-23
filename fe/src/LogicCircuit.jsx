@@ -239,22 +239,27 @@ function LogicCircuit() {
     const wireBtnRef = useRef();
     const eraserBtnRef = useRef();
     const fileUploadRef = useRef();
+    const [cursor, setCursor] = useState('default');
 
     let clientX = 0;
     let clientY = 0;
-    let toolInHand;
+    const [toolInHand, setToolInHand] = useState('wire');
     let wireStartX = null;
     let wireStartY = null;
     const gridDrawer = new GridDrawer();
     const mainGateDrawer = new GateDrawer();
     const hintGateDrawer = new GateDrawer(CELL_SIZE, '#444444AA', '#444444AA', '#444444AA');
-    let circuitLogicBoard = new LogicCircuitBoard(CANVAS_SIZE);
+    const [circuitLogicBoard, setCircuitLogicBoard] = useState(new LogicCircuitBoard(CANVAS_SIZE));
     
     useEffect(() => {
         resetGridCanvas();
         updateMainCanvas();
         selectTool('wire');
     }, []);
+
+    useEffect(() => {
+        updateMainCanvas();
+    }, [circuitLogicBoard]);
 
     // Quick functions to get canvas context of the canvases
     function getGridContext() {
@@ -323,16 +328,18 @@ function LogicCircuit() {
         if (newX !== clientX || newY !== clientY) {
             clientX = newX;
             clientY = newY;
-            // If it's over a switch, don't update canvas
+            // If it's over a switch, don't update canvas.
+            // Show cursor as pointer.
             if (clientX === 2 && (
                 clientY === 7 ||
                 clientY === 15 ||
                 clientY === 23 ||
                 clientY === 31
             )) {
-                
+                setCursor('pointer');
                 return;
             }
+            setCursor('default');
             updateHintCanvas();
         }
     }
@@ -350,6 +357,7 @@ function LogicCircuit() {
             updateMainCanvas();
             return;
         }
+        console.log("Tool in hand: " + toolInHand);
         // If user is trying to add a wire
         if (toolInHand === 'wire') {
             // See if user already selected first point
@@ -389,8 +397,7 @@ function LogicCircuit() {
     }
 
     function replaceMapWithJson(jsonString) {
-        circuitLogicBoard = new LogicCircuitBoard(CANVAS_SIZE, jsonString);
-        updateMainCanvas();
+        setCircuitLogicBoard(new LogicCircuitBoard(CANVAS_SIZE, jsonString));
     }
 
     function selectTool(tool) {
@@ -400,7 +407,7 @@ function LogicCircuit() {
         notBtnRef.current.deselectTool();
         wireBtnRef.current.deselectTool();
         eraserBtnRef.current.deselectTool();
-        toolInHand = tool;
+        setToolInHand(tool);
         if (tool === 'AND') {
             andBtnRef.current.selectTool();
         }
@@ -416,6 +423,7 @@ function LogicCircuit() {
         else if (tool === 'eraser') {
             eraserBtnRef.current.selectTool();
         }
+        console.log(tool);
 
         wireStartX = null;
         wireStartY = null;
@@ -470,10 +478,10 @@ function LogicCircuit() {
                 </div>
                 <div>
                     <div className={"relative h-[" + TOTAL_SIZE + "px]"}>
-                        <canvas ref={gridCanvasRef} className="absolute bg-black" width={(CANVAS_SIZE - 1) * CELL_SIZE} height={(CANVAS_SIZE - 1) * CELL_SIZE}></canvas>
-                        <canvas ref={mainCanvasRef} className="absolute" width={(CANVAS_SIZE - 1) * CELL_SIZE} height={(CANVAS_SIZE - 1) * CELL_SIZE}></canvas>
-                        <canvas ref={hintCanvasRef} className="absolute" width={(CANVAS_SIZE - 1) * CELL_SIZE} height={(CANVAS_SIZE - 1) * CELL_SIZE}
+                        <canvas ref={gridCanvasRef} className="absolute bg-black pointer-events-none" width={(CANVAS_SIZE - 1) * CELL_SIZE} height={(CANVAS_SIZE - 1) * CELL_SIZE}></canvas>
+                        <canvas ref={mainCanvasRef} className="absolute" width={(CANVAS_SIZE - 1) * CELL_SIZE} height={(CANVAS_SIZE - 1) * CELL_SIZE}
                             onMouseLeave={clearHintCanvas} onMouseMove={handleCanvasMove} onMouseDown={handleCanvasClick}></canvas>
+                        <canvas ref={hintCanvasRef} className={"absolute pointer-events-none cursor-" + cursor} width={(CANVAS_SIZE - 1) * CELL_SIZE} height={(CANVAS_SIZE - 1) * CELL_SIZE}></canvas>
                     </div>
                 </div>
             </div>
