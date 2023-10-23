@@ -241,6 +241,7 @@ function LogicCircuit() {
     const eraserBtnRef = useRef();
     const fileUploadRef = useRef();
     const [cursor, setCursor] = useState('default');
+    const [showUploadPopup, setShowUploadPopup] = useState(false);
 
     let clientX = 0;
     let clientY = 0;
@@ -398,6 +399,7 @@ function LogicCircuit() {
     }
 
     function replaceMapWithJson(jsonString) {
+        setShowUploadPopup(false);
         setCircuitLogicBoard(new LogicCircuitBoard(CANVAS_SIZE, jsonString));
     }
 
@@ -444,20 +446,6 @@ function LogicCircuit() {
         let jsonString = circuitLogicBoard.toJsonString();
         downloadFile(jsonString, 'circuitMap.json', 'text/plain');   
     }
-    
-    async function uploadJson() {
-        let files = fileUploadRef.current.files;
-        if (files.length <= 0) {
-            alert("Please select a file first.");
-            return;
-        }
-        let fr = new FileReader();
-        fr.onload = function (e) {
-            replaceMapWithJson(e.target.result);
-        }
-        fr.readAsText(files[0]);
-    }
-
 
     return (
         <>
@@ -473,7 +461,7 @@ function LogicCircuit() {
                     <LogicGateButton className='block mt-[10px]' image={wireImg} onClick={() => selectTool('wire')} ref={wireBtnRef}></LogicGateButton>
                     <LogicGateButton className='block mt-[30px]' image={eraserImg} onClick={() => selectTool('eraser')} ref={eraserBtnRef}></LogicGateButton>
                     <div className="absolute bottom-0">
-                        <LogicGateButton image={uploadImg} onClick={uploadJson}></LogicGateButton>
+                        <LogicGateButton image={uploadImg} onClick={() => setShowUploadPopup(true)}></LogicGateButton>
                         <LogicGateButton className='block mt-[10px]' image={downloadImg} onClick={toJson}></LogicGateButton>
                     </div>
                 </div>
@@ -487,7 +475,7 @@ function LogicCircuit() {
                 </div>
             </div>
             <input type="file" ref={fileUploadRef} />
-            <UploadPopup onSubmit={replaceMapWithJson}></UploadPopup>
+            {showUploadPopup && <UploadPopup onSubmit={replaceMapWithJson}></UploadPopup>}
         </>
     );
 }
