@@ -11,6 +11,7 @@ import eraserImg from "./assets/images/eraser.svg";
 import undoImg from "./assets/images/undo.svg";
 import redoImg from "./assets/images/redo.svg";
 import { downloadFile } from "./utilities/File";
+import { UploadPopup } from "./components/Popups";
 
 const CANVAS_SIZE = 40;
 const CELL_SIZE = 15;
@@ -486,6 +487,7 @@ function LogicCircuit() {
                 </div>
             </div>
             <input type="file" ref={fileUploadRef} />
+            <UploadPopup onSubmit={replaceMapWithJson}></UploadPopup>
         </>
     );
 }
