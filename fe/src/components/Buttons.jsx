@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import xImg from '../assets/images/x.svg';
 
 class LogicGateButton extends React.Component {
 
@@ -59,4 +60,18 @@ class MainButton extends React.Component {
     }
 }
 
-export { LogicGateButton, MainButton };
+class XButton extends React.Component {
+    constructor() {
+        super();
+    }
+
+    render() {
+        return (
+            <button {...this.props}>
+                <img className='w-[30px]' src={xImg} />
+            </button>
+        );
+    }
+}
+
+export { LogicGateButton, MainButton, XButton };

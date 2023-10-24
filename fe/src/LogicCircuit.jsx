@@ -474,7 +474,7 @@ function LogicCircuit() {
                     </div>
                 </div>
             </div>
-            {showUploadPopup && <UploadPopup onSubmit={replaceMapWithJson}></UploadPopup>}
+            {showUploadPopup && <UploadPopup onSubmit={replaceMapWithJson} onClose={() => setShowUploadPopup(false)}></UploadPopup>}
         </>
     );
 }

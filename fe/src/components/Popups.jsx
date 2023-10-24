@@ -1,5 +1,5 @@
 import React from 'react';
-import { MainButton } from './Buttons';
+import { MainButton, XButton } from './Buttons';
 
 
 class UploadPopup extends React.Component {
@@ -50,6 +50,7 @@ class UploadPopup extends React.Component {
         return (
             <>
                 <div className='absolute bg-gray-300 w-[400px] top-[calc(50%-100px)] left-[calc(50%-200px)] rounded-lg border-solid border-[4px] border-gray-600'>
+                    <XButton onClick={this.props.onClose} className='absolute right-[7px] top-[7px] rounded-[15px] hover:bg-gray-400'></XButton>
                     <h2 className='mt-[20px]'>Want to Upload a Map?</h2>
                     <input className='mt-[20px] mb-[15px]' type="file" onChange={e => this.onFileChange(e)} />
                     {this.state.errorMessage ? <p className='text-[12px] text-red-500 mb-[10px]'>{this.state.errorMessage}</p> : null}
