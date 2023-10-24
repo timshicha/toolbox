@@ -43,4 +43,20 @@ class LogicGateButton extends React.Component {
     }
 }
 
-export { LogicGateButton };
+class MainButton extends React.Component {
+    constructor() {
+        super();
+    }
+
+    render() {
+        return (
+            <>
+                <button className={'block mx-auto bg-gray-400 px-[20px] py-[10px] rounded-lg border-[2px] border-black border-solid text-l font-bold hover:bg-gray-500 active:bg-gray-600 ' + this.props.styles} {...this.props}>
+                    {this.props.children}
+                </button>
+            </>
+        );
+    }
+}
+
+export { LogicGateButton, MainButton };

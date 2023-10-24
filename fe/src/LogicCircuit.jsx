@@ -474,7 +474,6 @@ function LogicCircuit() {
                     </div>
                 </div>
             </div>
-            <input type="file" ref={fileUploadRef} />
             {showUploadPopup && <UploadPopup onSubmit={replaceMapWithJson}></UploadPopup>}
         </>
     );
