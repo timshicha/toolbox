@@ -258,15 +258,15 @@ function LogicCircuit() {
         updateMainCanvas();
         selectTool('wire');
 
-        document.addEventListener("keydown", handleKeyPress, false);
-
-        return () => {
-            document.removeEventListener("keydown", handleKeyPress, false);
-        }
     }, []);
 
     useEffect(() => {
         updateMainCanvas();
+
+        document.addEventListener("keydown", handleKeyPress, false);
+        return () => {
+            document.removeEventListener("keydown", handleKeyPress, false);
+        }
     }, [circuitLogicBoard]);
 
     function handleKeyPress(event) {
