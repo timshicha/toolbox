@@ -156,11 +156,9 @@ export class LogicCircuitBoard {
         }
         this.history.push(actionList);
         this.historyIndex++;
-        console.log(this.history);
     }
 
     undo() {
-        console.log(this.historyIndex);
         // Go back an index and undo what was done
         if (this.historyIndex === 0) {
             return;
@@ -396,7 +394,6 @@ export class LogicCircuitBoard {
 
     erase(x, y) {
         if (this.isSwitch(x, y)) {
-            console.log("Can't delete a switch");
             return;
         }
         let actionList = [];

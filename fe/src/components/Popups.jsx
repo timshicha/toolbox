@@ -32,7 +32,6 @@ class UploadPopup extends React.Component {
             this.showErrorMessage('Please select a file to upload first.');
             return;
         }
-        console.log(this.state.map);
         let fr = new FileReader();
         fr.onload = (e) => {
             this.props.onSubmit(e.target.result);
@@ -92,7 +91,6 @@ class ConfirmPopup extends React.Component {
             this.showErrorMessage('Please select a file to upload first.');
             return;
         }
-        console.log(this.state.map);
         let fr = new FileReader();
         fr.onload = (e) => {
             this.props.onSubmit(e.target.result);
@@ -113,7 +111,7 @@ class ConfirmPopup extends React.Component {
                     <XButton onClick={this.props.onClose} className='absolute right-[7px] top-[7px] rounded-[15px] hover:bg-gray-400'></XButton>
                     <h2 className='mt-[20px]'>Clear map?</h2>
                     <p className='text-[12px] p-[10px]'>Are you sure you want to clear the current map? This will clear the history as well, so you will not be able to retrieve the map unless you have it saved.</p>
-                    <MainButton red={true} styles='inline m-[10px] mr-[10px] bg-black' onClick={this.props.onSubmit}>Clear Map</MainButton>
+                    <MainButton type={'red'} styles='inline m-[10px] mr-[10px] bg-black' onClick={this.props.onSubmit}>Clear Map</MainButton>
                     <MainButton styles='inline m-[10px]' onClick={this.props.onClose}>Cancel</MainButton>
                 </div>
             </>  

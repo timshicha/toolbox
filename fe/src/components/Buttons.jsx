@@ -52,7 +52,7 @@ class MainButton extends React.Component {
     render() {
         return (
             <>
-                <button className={(this.props.red ? 'bg-red-600 hover:bg-red-700 active:bg-red-800 hover:text-white active:text-white': 'bg-gray-400 hover:bg-gray-500 active:bg-gray-600') + ' block mx-auto bg-black px-[20px] py-[10px] rounded-lg border-[2px] border-black border-solid text-l font-bold ' + this.props.styles} {...this.props}>
+                <button className={(this.props.type === 'red' ? 'bg-red-600 hover:bg-red-700 active:bg-red-800 hover:text-white active:text-white': 'bg-gray-400 hover:bg-gray-500 active:bg-gray-600') + ' block mx-auto bg-black px-[20px] py-[10px] rounded-lg border-[2px] border-black border-solid text-l font-bold ' + this.props.styles} {...this.props}>
                     {this.props.children}
                 </button>
             </>

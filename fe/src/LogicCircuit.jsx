@@ -359,7 +359,6 @@ function LogicCircuit() {
             updateMainCanvas();
             return;
         }
-        console.log("Tool in hand: " + toolInHand);
         // If user is trying to add a wire
         if (toolInHand === 'wire') {
             // See if user already selected first point
@@ -398,24 +397,14 @@ function LogicCircuit() {
         updateMainCanvas();
     }
 
-    function undo() {
-        console.log("UNDO: Current logic board:", circuitLogicBoard);
-        
-        console.log(circuitLogicBoard.history);
+    function undo() {        
         circuitLogicBoard.undo();
         updateMainCanvas();
-        setTimeout(() => {console.log("abcdfnerofnero")}, 1000);
     }
 
     function redo() {
-        console.log("REDO");
-        setTimeout(() => {console.log("abcdfnerofnero")}, 1000);
-        console.log(circuitLogicBoard.history);
-
         circuitLogicBoard.redo();
         updateMainCanvas();
-
-        console.log(circuitLogicBoard.history);
     }
 
     function replaceMapWithJson(jsonString) {
@@ -447,8 +436,6 @@ function LogicCircuit() {
         else if (tool === 'eraser') {
             eraserBtnRef.current.selectTool();
         }
-        console.log(tool);
-
         wireStartX = null;
         wireStartY = null;
     }
@@ -462,7 +449,6 @@ function LogicCircuit() {
         setCircuitLogicBoard(new LogicCircuitBoard(CANVAS_SIZE));
         updateMainCanvas();
         setShowConfirmClearPopup(false);
-        console.log("cleared");
     }
 
     return (
