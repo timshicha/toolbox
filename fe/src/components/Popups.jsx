@@ -62,4 +62,63 @@ class UploadPopup extends React.Component {
     }
 };
 
-export { UploadPopup };
+class ConfirmPopup extends React.Component {
+    constructor() {
+        super();
+
+        this.state = {
+            map: null,
+            errorMessage: null
+        };
+    }
+
+    onFileChange = (e) => {
+        // If there's a file, update the file selected
+        if(e.target.files && e.target.files.length > 0) {
+            this.setState({
+                map: e.target.files[0]
+            });
+        }
+        // Otherwise, remove the selected file
+        else {
+            this.setState({
+                map: null
+            });
+        }
+    }
+
+    upload = () => {
+        if (!this.state.map) {
+            this.showErrorMessage('Please select a file to upload first.');
+            return;
+        }
+        console.log(this.state.map);
+        let fr = new FileReader();
+        fr.onload = (e) => {
+            this.props.onSubmit(e.target.result);
+        };
+        fr.readAsText(this.state.map);
+    }
+
+    showErrorMessage = (errorMessage) => {
+        this.setState({
+            errorMessage: errorMessage
+        });
+    }
+
+    render() {
+        return (
+            <>
+                <div className='absolute bg-gray-300 w-[400px] top-[calc(50%-100px)] left-[calc(50%-200px)] rounded-lg border-solid border-[4px] border-gray-600'>
+                    <XButton onClick={this.props.onClose} className='absolute right-[7px] top-[7px] rounded-[15px] hover:bg-gray-400'></XButton>
+                    <h2 className='mt-[20px]'>Clear map?</h2>
+                    <p className='text-[12px] p-[10px]'>Are you sure you want to clear the current map? This will clear the history as well, so you will not be able to retrieve the map unless you have it saved.</p>
+                    <MainButton red={true} styles='inline m-[10px] mr-[10px] bg-black' onClick={this.props.onSubmit}>Clear Map</MainButton>
+                    <MainButton styles='inline m-[10px]' onClick={this.props.onClose}>Cancel</MainButton>
+                </div>
+            </>  
+        );
+    }
+};
+
+export { UploadPopup, ConfirmPopup };

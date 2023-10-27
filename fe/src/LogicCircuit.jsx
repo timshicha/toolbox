@@ -11,7 +11,7 @@ import eraserImg from "./assets/images/eraser.svg";
 import undoImg from "./assets/images/undo.svg";
 import redoImg from "./assets/images/redo.svg";
 import { downloadFile } from "./utilities/File";
-import { UploadPopup } from "./components/Popups";
+import { ConfirmPopup, UploadPopup } from "./components/Popups";
 
 const CANVAS_SIZE = 40;
 const CELL_SIZE = 15;
@@ -241,6 +241,7 @@ function LogicCircuit() {
     const eraserBtnRef = useRef();
     const [cursor, setCursor] = useState('default');
     const [showUploadPopup, setShowUploadPopup] = useState(false);
+    const [showConfirmClearPopup, setShowConfirmClearPopup] = useState(false);
 
     let clientX = 0;
     let clientY = 0;
@@ -457,14 +458,24 @@ function LogicCircuit() {
         downloadFile(jsonString, 'circuitMap.json', 'text/plain');   
     }
 
+    function clearMap() {
+        setCircuitLogicBoard(new LogicCircuitBoard(CANVAS_SIZE));
+        updateMainCanvas();
+        setShowConfirmClearPopup(false);
+        console.log("cleared");
+    }
+
     return (
         <>
-            <div className="block p-[10px] pl-[70px] flex">
+            <div className="block p-[10px] left-[70px] flex relative w-[580px]">
                 <button onClick={undo} className={"bg-gray-300 hover:bg-gray-400 rounded-lg active:bg-gray-500 p-[3px]"}>
                     <img src={undoImg} width={'50px'} />
                 </button>
                 <button onClick={redo} className={"ml-[10px] bg-gray-300 hover:bg-gray-400 rounded-lg active:bg-gray-500 p-[3px]"}>
                     <img src={redoImg} width={'50px'} />
+                </button>
+                <button onClick={() => setShowConfirmClearPopup(true)} className={"absolute bg-gray-300 hover:bg-gray-400 rounded-lg active:bg-gray-500 p-[10px] right-0 bottom-[10px] text-[16px] font-bold"}>
+                    Clear map
                 </button>
             </div>
             <div className="flex">
@@ -489,6 +500,7 @@ function LogicCircuit() {
                 </div>
             </div>
             {showUploadPopup && <UploadPopup onSubmit={replaceMapWithJson} onClose={() => setShowUploadPopup(false)}></UploadPopup>}
+            {showConfirmClearPopup && <ConfirmPopup onSubmit={clearMap} onClose={() => setShowConfirmClearPopup(false)}></ConfirmPopup>}
         </>
     );
 }
