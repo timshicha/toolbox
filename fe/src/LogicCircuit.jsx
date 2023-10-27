@@ -239,7 +239,6 @@ function LogicCircuit() {
     const notBtnRef = useRef();
     const wireBtnRef = useRef();
     const eraserBtnRef = useRef();
-    const fileUploadRef = useRef();
     const [cursor, setCursor] = useState('default');
     const [showUploadPopup, setShowUploadPopup] = useState(false);
 
@@ -398,9 +397,30 @@ function LogicCircuit() {
         updateMainCanvas();
     }
 
+    function undo() {
+        console.log("UNDO: Current logic board:", circuitLogicBoard);
+        
+        console.log(circuitLogicBoard.history);
+        circuitLogicBoard.undo();
+        updateMainCanvas();
+        setTimeout(() => {console.log("abcdfnerofnero")}, 1000);
+    }
+
+    function redo() {
+        console.log("REDO");
+        setTimeout(() => {console.log("abcdfnerofnero")}, 1000);
+        console.log(circuitLogicBoard.history);
+
+        circuitLogicBoard.redo();
+        updateMainCanvas();
+
+        console.log(circuitLogicBoard.history);
+    }
+
     function replaceMapWithJson(jsonString) {
         setShowUploadPopup(false);
-        setCircuitLogicBoard(new LogicCircuitBoard(CANVAS_SIZE, jsonString));
+        let newBoard = new LogicCircuitBoard(CANVAS_SIZE, jsonString);
+        setCircuitLogicBoard(newBoard);
     }
 
     function selectTool(tool) {
@@ -432,16 +452,6 @@ function LogicCircuit() {
         wireStartY = null;
     }
 
-    function undo() {
-        circuitLogicBoard.undo();
-        updateMainCanvas();
-    }
-
-    function redo() {
-        circuitLogicBoard.redo();
-        updateMainCanvas();
-    }
-
     function toJson() {
         let jsonString = circuitLogicBoard.toJsonString();
         downloadFile(jsonString, 'circuitMap.json', 'text/plain');   
@@ -450,8 +460,12 @@ function LogicCircuit() {
     return (
         <>
             <div className="block p-[10px] pl-[70px] flex">
-                <LogicGateButton className="mr-[10px]" image={undoImg} onClick={undo}>Undo</LogicGateButton>
-                <LogicGateButton image={redoImg} onClick={redo}>Redo</LogicGateButton>
+                <button onClick={undo} className={"bg-gray-300 hover:bg-gray-400 rounded-lg active:bg-gray-500 p-[3px]"}>
+                    <img src={undoImg} width={'50px'} />
+                </button>
+                <button onClick={redo} className={"ml-[10px] bg-gray-300 hover:bg-gray-400 rounded-lg active:bg-gray-500 p-[3px]"}>
+                    <img src={redoImg} width={'50px'} />
+                </button>
             </div>
             <div className="flex">
                 <div className={"relative h-[570px] p-[10px]"}>
