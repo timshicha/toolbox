@@ -47,6 +47,24 @@ class UploadPopup extends React.Component {
         });
     }
 
+    handleKeyPress = (event) => {
+        event.preventDefault();
+        if (event.key === 'Escape') {
+            this.props.onClose();
+        }
+        else if (event.key === 'Enter') {
+            this.upload();
+        }
+    }
+
+    componentDidMount() {
+        document.addEventListener("keydown", this.handleKeyPress, false);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener("keydown", this.handleKeyPress, false);
+    }
+
     render() {
         return (
             <>
@@ -105,6 +123,25 @@ class ConfirmPopup extends React.Component {
         this.setState({
             errorMessage: errorMessage
         });
+    }
+ 
+    handleKeyPress = (event) => {
+        event.preventDefault();
+        console.log(event);
+        if (event.key === 'Escape') {
+            this.props.onClose();
+        }
+        else if (event.key === 'Enter') {
+            this.props.onSubmit();
+        }
+    }
+
+    componentDidMount() {
+        document.addEventListener("keydown", this.handleKeyPress, false);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener("keydown", this.handleKeyPress, false);
     }
 
     render() {
