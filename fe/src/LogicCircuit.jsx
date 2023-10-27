@@ -257,11 +257,26 @@ function LogicCircuit() {
         resetGridCanvas();
         updateMainCanvas();
         selectTool('wire');
+
+        document.addEventListener("keydown", handleKeyPress, false);
+
+        return () => {
+            document.removeEventListener("keydown", handleKeyPress, false);
+        }
     }, []);
 
     useEffect(() => {
         updateMainCanvas();
     }, [circuitLogicBoard]);
+
+    function handleKeyPress(event) {
+        if (event.ctrlKey && event.key.toLowerCase() === 'z') {
+            undo();
+        }
+        else if (event.ctrlKey && event.key.toLowerCase() === 'y') {
+            redo();
+        }
+    }
 
     // Quick functions to get canvas context of the canvases
     function getGridContext() {

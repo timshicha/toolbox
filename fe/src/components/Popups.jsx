@@ -127,7 +127,6 @@ class ConfirmPopup extends React.Component {
  
     handleKeyPress = (event) => {
         event.preventDefault();
-        console.log(event);
         if (event.key === 'Escape') {
             this.props.onClose();
         }
