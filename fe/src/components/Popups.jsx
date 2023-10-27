@@ -10,6 +10,8 @@ class UploadPopup extends React.Component {
             map: null,
             errorMessage: null
         };
+
+        this.background = <div className='fixed top-0 left-0 h-[100%] w-[100%] bg-black overflow-hidden opacity-80'></div>;
     }
 
     onFileChange = (e) => {
@@ -48,6 +50,7 @@ class UploadPopup extends React.Component {
     render() {
         return (
             <>
+                <div className='fixed top-0 left-0 h-[100%] w-[100%] bg-black overflow-hidden opacity-80' onMouseDown={this.props.onClose}></div>
                 <div className='absolute bg-gray-300 w-[400px] top-[calc(50%-100px)] left-[calc(50%-200px)] rounded-lg border-solid border-[4px] border-gray-600'>
                     <XButton onClick={this.props.onClose} className='absolute right-[7px] top-[7px] rounded-[15px] hover:bg-gray-400'></XButton>
                     <h2 className='mt-[20px]'>Want to Upload a Map?</h2>
@@ -107,7 +110,8 @@ class ConfirmPopup extends React.Component {
     render() {
         return (
             <>
-                <div className='absolute bg-gray-300 w-[400px] top-[calc(50%-100px)] left-[calc(50%-200px)] rounded-lg border-solid border-[4px] border-gray-600'>
+                <div className='fixed top-0 left-0 h-[100%] w-[100%] bg-black overflow-hidden opacity-80' onMouseDown={this.props.onClose}></div>
+                <div className='absolute bg-gray-300 w-[400px] top-[calc(50%-100px)] left-[calc(50%-200px)] rounded-lg border-solid border-[4px] border-gray-600 backdrop-brightness-200'>
                     <XButton onClick={this.props.onClose} className='absolute right-[7px] top-[7px] rounded-[15px] hover:bg-gray-400'></XButton>
                     <h2 className='mt-[20px]'>Clear map?</h2>
                     <p className='text-[12px] p-[10px]'>Are you sure you want to clear the current map? This will clear the history as well, so you will not be able to retrieve the map unless you have it saved.</p>
