@@ -10,6 +10,7 @@ import uploadImg from "./assets/images/upload.svg";
 import eraserImg from "./assets/images/eraser.svg";
 import undoImg from "./assets/images/undo.svg";
 import redoImg from "./assets/images/redo.svg";
+import howToUseImg from "./assets/images/how-to-use.svg";
 import { downloadFile } from "./utilities/File";
 import { ConfirmPopup, UploadPopup } from "./components/Popups";
 
@@ -497,6 +498,10 @@ function LogicCircuit() {
                         <canvas ref={mainCanvasRef} className="absolute" width={(CANVAS_SIZE - 1) * CELL_SIZE} height={(CANVAS_SIZE - 1) * CELL_SIZE}
                             onMouseLeave={clearHintCanvas} onMouseMove={handleCanvasMove} onMouseDown={handleCanvasClick}></canvas>
                         <canvas ref={hintCanvasRef} className={"absolute pointer-events-none cursor-" + cursor} width={(CANVAS_SIZE - 1) * CELL_SIZE} height={(CANVAS_SIZE - 1) * CELL_SIZE}></canvas>
+                        <div className={"relative left-[700px]"}>
+                        <img src={howToUseImg} width={550} className="bg-gray-500 border-[10px] border-gray-500">
+                        </img>
+                    </div>
                     </div>
                 </div>
             </div>
